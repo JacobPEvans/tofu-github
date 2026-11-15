@@ -8,7 +8,7 @@ mock_provider "github" {
   mock_data "github_repository" {
     defaults = {
       default_branch = "main"
-      full_name      = "JacobPEvans/.github"
+      full_name      = "example-org/.github"
       repo_id        = 1
       topics         = []
       visibility     = "public"
@@ -131,7 +131,7 @@ run "adds_revert_delay_environment_to_every_gate_repository" {
   override_data {
     target = data.github_repository_file.ci_gate
     values = {
-      content = "name: CI\non: pull_request\njobs:\n  gate:\n    uses: JacobPEvans/.github/.github/workflows/_ci-gate.yml@v1\n"
+      content = "name: CI\non: pull_request\njobs:\n  gate:\n    uses: example-org/.github/.github/workflows/_ci-gate.yml@v1\n"
     }
   }
 
@@ -197,7 +197,7 @@ run "adds_no_revert_delay_environment_without_a_gate_caller" {
   override_data {
     target = data.github_repository_file.ci_gate
     values = {
-      content = "name: CI\non: pull_request\njobs:\n  ci:\n    uses: JacobPEvans/.github/.github/workflows/_ci-gate.yml@v1\n"
+      content = "name: CI\non: pull_request\njobs:\n  ci:\n    uses: example-org/.github/.github/workflows/_ci-gate.yml@v1\n"
     }
   }
 
