@@ -40,6 +40,12 @@ locals {
       topics      = []
       gitflow     = false
     }
+    ".agents" = {
+      visibility  = "public"
+      description = "Organization-wide agent skills"
+      topics      = []
+      gitflow     = false
+    }
     }, {
     for name, repo in data.github_repository.enumerated : name => {
       visibility  = repo.visibility
