@@ -1015,4 +1015,15 @@ run "merge_tier_property_declared_and_set_per_repository" {
     )
     error_message = "The rollback switch must turn hot into standard and leave every other tier as declared."
   }
+
+  assert {
+    condition = (
+      can(regex(local.gitflow_commit_message_pattern, "Revert \"feat: add a thing (#12)\"")) &&
+      can(regex(local.gitflow_commit_message_pattern, "Merge branch 'main' into develop")) &&
+      can(regex(local.gitflow_commit_message_pattern, "fix(ci): pin the action")) &&
+      !can(regex(local.gitflow_commit_message_pattern, "Reverted something")) &&
+      !can(regex(local.gitflow_commit_message_pattern, "update stuff"))
+    )
+    error_message = "The branch commit pattern must accept merge, native revert and conventional subjects, and nothing else."
+  }
 }
