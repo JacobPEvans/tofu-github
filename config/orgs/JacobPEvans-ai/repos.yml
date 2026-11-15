@@ -12,6 +12,16 @@ repos:
       - codex
       - hermes-agent
       - mcp
+  merge-flow-fixture:
+    visibility: public
+    description: "Upstream test fixture for the merge queue, lanes and post-merge checks"
+    topics: []
+    merge_tier: standard
+  merge-flow-fixture-consumer:
+    visibility: public
+    description: "Consumer test fixture for commit pins and cross-repository topic branches"
+    topics: []
+    merge_tier: standard
   pr-automation-fixture:
     visibility: public
     description: "Test fixture for pull request automation"
