@@ -97,6 +97,7 @@ run "green_and_topic_rulesets_protect_shared_branches" {
   variables {
     github_owner              = "tofu-test-fixture"
     automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
   }
 
   override_data {
@@ -147,6 +148,7 @@ run "merge_queue_ruleset_per_hot_repository" {
   variables {
     github_owner              = "tofu-test-fixture"
     automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
   }
 
   override_data {
@@ -219,6 +221,7 @@ run "adds_revert_delay_environment_to_every_gate_repository" {
     github_owner              = "example-org"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
   }
 
   override_data {
@@ -284,6 +287,7 @@ run "adds_no_revert_delay_environment_without_a_gate_caller" {
     github_owner              = "example-org"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
   }
 
   override_data {
