@@ -1020,10 +1020,13 @@ run "merge_tier_property_declared_and_set_per_repository" {
     condition = (
       can(regex(local.gitflow_commit_message_pattern, "Revert \"feat: add a thing (#12)\"")) &&
       can(regex(local.gitflow_commit_message_pattern, "Merge branch 'main' into develop")) &&
+      can(regex(local.gitflow_commit_message_pattern, "Revert \"Revert \"fix: pin the action\"\"")) &&
       can(regex(local.gitflow_commit_message_pattern, "fix(ci): pin the action")) &&
       !can(regex(local.gitflow_commit_message_pattern, "Reverted something")) &&
+      !can(regex(local.gitflow_commit_message_pattern, "Revert \"update stuff\"")) &&
+      !can(regex(local.gitflow_commit_message_pattern, "Revert feat: add a thing")) &&
       !can(regex(local.gitflow_commit_message_pattern, "update stuff"))
     )
-    error_message = "The branch commit pattern must accept merge, native revert and conventional subjects, and nothing else."
+    error_message = "The branch commit pattern must accept merge subjects, conventional subjects and native reverts of conventional subjects only."
   }
 }

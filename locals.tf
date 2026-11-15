@@ -73,6 +73,8 @@ locals {
 
   # Git-flow variant: back-merges and release merges land "Merge branch ..." /
   # "Merge pull request ..." subjects, and a native revert lands
-  # `Revert "<subject>"`, so leading alternations wrap the same pattern.
-  gitflow_commit_message_pattern = "^(Merge .+|Revert \".+\"|${trimprefix(local.commit_message_pattern, "^")})"
+  # `Revert "<subject>"`, so a leading "Merge " alternation and an optional
+  # `Revert "` prefix wrap the same pattern. The reverted subject itself must
+  # still be conventional.
+  gitflow_commit_message_pattern = "^(Merge .+|(Revert \")*${trimprefix(local.commit_message_pattern, "^")})"
 }
