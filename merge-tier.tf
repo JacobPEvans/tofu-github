@@ -28,8 +28,4 @@ resource "github_repository_custom_property" "merge_tier" {
   property_name  = github_organization_custom_properties.merge_tier.property_name
   property_type  = "single_select"
   property_value = [local.merge_tier_effective[each.key]]
-
-  # A renamed repo only answers to its new name after module.repo_settings
-  # applies the rename.
-  depends_on = [module.repo_settings]
 }

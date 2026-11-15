@@ -32,10 +32,6 @@ resource "github_repository_custom_property" "gitflow" {
   property_name  = github_organization_custom_properties.gitflow.property_name
   property_type  = "true_false"
   property_value = [tostring(contains(local.gitflow_repos, each.value))]
-
-  # A renamed repo only answers to its new name after module.repo_settings
-  # applies the rename.
-  depends_on = [module.repo_settings]
 }
 
 moved {

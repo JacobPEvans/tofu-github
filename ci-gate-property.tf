@@ -73,6 +73,4 @@ resource "github_repository_custom_property" "ci_gate" {
   property_name  = "ci_gate"
   property_type  = "true_false"
   property_value = [tostring(contains(local.ci_gate_repos, each.value))]
-
-  depends_on = [module.repo_settings]
 }

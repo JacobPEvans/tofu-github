@@ -39,7 +39,4 @@ resource "github_repository_custom_property" "family" {
   property_name  = github_organization_custom_properties.family.property_name
   property_type  = "single_select"
   property_value = [each.value]
-
-  # A repos.yml entry may create the repository in the same apply.
-  depends_on = [module.repo_settings]
 }
