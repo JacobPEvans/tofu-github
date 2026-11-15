@@ -102,6 +102,8 @@ resource "restapi_object" "org_gitflow_main" {
       },
     ]
   })
+
+  depends_on = [github_organization_custom_properties.gitflow]
 }
 
 # Git-flow `develop` protection — the integration branch on opted-in repos.
@@ -173,4 +175,6 @@ resource "restapi_object" "org_gitflow_develop" {
       },
     ]
   })
+
+  depends_on = [github_organization_custom_properties.gitflow]
 }
