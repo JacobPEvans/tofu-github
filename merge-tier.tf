@@ -16,6 +16,8 @@ resource "github_organization_custom_properties" "merge_tier" {
 
 # Set the tier on every unarchived managed repo. A repos.yml entry selects its
 # value with `merge_tier:`; every other repo inherits the "legacy" default.
+# merge_queue.force_standard in config/rulesets-defaults.yml turns hot into
+# standard for every repo (local.merge_tier_effective in merge-queue.tf).
 # Archived repos are read-only and skipped.
 resource "github_repository_custom_property" "merge_tier" {
   for_each = {
@@ -25,7 +27,7 @@ resource "github_repository_custom_property" "merge_tier" {
   repository     = each.key
   property_name  = github_organization_custom_properties.merge_tier.property_name
   property_type  = "single_select"
-  property_value = [try(each.value.merge_tier, "legacy")]
+  property_value = [local.merge_tier_effective[each.key]]
 
   # A renamed repo only answers to its new name after module.repo_settings
   # applies the rename.

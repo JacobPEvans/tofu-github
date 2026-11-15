@@ -45,6 +45,9 @@ branch_protection:
 # Consumed by github_repository_ruleset.merge_queue in merge-queue.tf, one
 # ruleset per repository with `merge_tier: hot` in the selected org's repos.yml.
 merge_queue:
+  # Rollback switch: true gives every hot repository the standard tier, which
+  # removes its queue ruleset and sets its merge_tier property in one apply.
+  force_standard: false
   enforcement: active
   merge_method: SQUASH
   # Must stay ALLGREEN: merge-queue.tf refuses any other value.
