@@ -5,6 +5,9 @@
 sweep_repository: .github-ai
 claude_bot_app_id: "2956476"
 runner_group: pr-reconcile
+# Optional: the caller workflow the sweep starts for a pull request that fails
+# a code check; a repository without that file is left alone.
+ci_fix_workflow: openhands-ci-fix.yml
 owners:
   - JacobPEvans
   - JacobPEvans-ai

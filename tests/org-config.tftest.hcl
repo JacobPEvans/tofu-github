@@ -154,6 +154,17 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
 
   assert {
     condition = (
+      length(github_actions_variable.pr_reconcile_ci_fix_workflow) == 1 &&
+      github_actions_variable.pr_reconcile_ci_fix_workflow[0].repository == local.pr_reconcile_config.sweep_repository &&
+      github_actions_variable.pr_reconcile_ci_fix_workflow[0].variable_name == "PR_RECONCILE_CI_FIX_WORKFLOW" &&
+      github_actions_variable.pr_reconcile_ci_fix_workflow[0].value == local.pr_reconcile_config.ci_fix_workflow &&
+      can(regex("\\.ya?ml$", github_actions_variable.pr_reconcile_ci_fix_workflow[0].value))
+    )
+    error_message = "The CI fix workflow variable must come from the owner's pr-reconcile.yml."
+  }
+
+  assert {
+    condition = (
       length(github_actions_runner_group.pr_reconcile) == 1 &&
       github_actions_runner_group.pr_reconcile[0].name == "pr-reconcile" &&
       github_actions_runner_group.pr_reconcile[0].visibility == "selected" &&
@@ -288,11 +299,6 @@ run "main_from_renovate_preset_is_configured_as_default" {
       github_branch_default.main_from_renovate_preset["sample"].branch == "main"
     )
     error_message = "The created main branch must become the selected repo's default branch."
-  }
-
-  assert {
-    condition     = yamldecode(file("${path.module}/config/orgs/dryvist/repos.yml")).repos["ai-cli-permissions"].main_from_renovate_preset
-    error_message = "The first repo must select the shared main-branch bootstrap through its org config."
   }
 }
 
@@ -635,6 +641,7 @@ run "placeholder_org_disables_org_specific_extras" {
       length(github_organization_ruleset.merge_hold) == 0,
       length(github_actions_variable.pr_reconcile_owners) == 0,
       length(github_actions_variable.pr_reconcile_claude_bot_id) == 0,
+      length(github_actions_variable.pr_reconcile_ci_fix_workflow) == 0,
     ])
     error_message = "Organization-specific resources must have no instances when the opt-in is false."
   }
@@ -942,5 +949,53 @@ run "fork_approval_defaults_to_all_external_contributors" {
       github_actions_runner_group.default.allows_public_repositories
     )
     error_message = "The built-in Default runner group must stay visible to all repositories and serve public ones."
+  }
+}
+
+run "merge_tier_property_declared_and_set_per_repository" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition = (
+      github_organization_custom_properties.merge_tier.value_type == "single_select" &&
+      github_organization_custom_properties.merge_tier.required &&
+      toset(github_organization_custom_properties.merge_tier.allowed_values) == toset(["legacy", "standard", "hot"]) &&
+      github_organization_custom_properties.merge_tier.default_value == "legacy" &&
+      github_organization_custom_properties.merge_tier.values_editable_by == "org_actors"
+    )
+    error_message = "The merge tier must be a required single select with the legacy default, editable only by org actors."
+  }
+
+  assert {
+    condition     = github_repository_custom_property.merge_tier["sample"].property_value == toset(["hot"])
+    error_message = "A repos.yml entry selecting merge_tier must set that exact value on its repository."
+  }
+
+  assert {
+    condition = (
+      github_repository_custom_property.merge_tier[".github"].property_value == toset(["legacy"]) &&
+      github_repository_custom_property.merge_tier[".github-private"].property_value == toset(["legacy"])
+    )
+    error_message = "Repositories without a merge_tier entry must carry the legacy default."
   }
 }

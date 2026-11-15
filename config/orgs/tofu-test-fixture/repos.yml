@@ -5,3 +5,4 @@ repos:
     description: "Repository branch configuration test fixture"
     topics: []
     main_from_renovate_preset: true
+    merge_tier: hot
