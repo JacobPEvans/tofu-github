@@ -32,6 +32,23 @@ resource "github_actions_variable" "pr_reconcile_claude_bot_id" {
   }
 }
 
+# Optional: the caller workflow file the sweep starts in a repository whose
+# pull request fails a code check. Unset, the sweep starts no CI fix.
+resource "github_actions_variable" "pr_reconcile_ci_fix_workflow" {
+  count = try(local.pr_reconcile_config.ci_fix_workflow, null) == null ? 0 : 1
+
+  repository    = try(local.pr_reconcile_config.sweep_repository, "")
+  variable_name = "PR_RECONCILE_CI_FIX_WORKFLOW"
+  value         = try(local.pr_reconcile_config.ci_fix_workflow, "")
+
+  lifecycle {
+    precondition {
+      condition     = try(local.pr_reconcile_config.sweep_repository, "") != "" && can(regex("^[A-Za-z0-9._-]+\\.ya?ml$", try(local.pr_reconcile_config.ci_fix_workflow, "")))
+      error_message = "config/orgs/<owner>/pr-reconcile.yml ci_fix_workflow needs sweep_repository and a workflow file name ending in .yml or .yaml."
+    }
+  }
+}
+
 data "github_repository" "pr_reconcile" {
   count = try(local.pr_reconcile_config.runner_group, null) == null ? 0 : 1
 
