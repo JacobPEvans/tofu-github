@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.54.0](https://github.com/dryvist/tofu-github/compare/v1.53.0...v1.54.0) (2026-11-15)
+
+
+### Features
+
+* **actions:** set the sweep CI fix workflow variable from pr-reconcile.yml ([#470](https://github.com/dryvist/tofu-github/issues/470)) ([88015a1](https://github.com/dryvist/tofu-github/commit/88015a118a93a946fa4983d1832aba0cc81856d8))
+* **environments:** add the revert-delay environment with a fifteen-minute wait ([#468](https://github.com/dryvist/tofu-github/issues/468)) ([9a2e9c6](https://github.com/dryvist/tofu-github/commit/9a2e9c62c56e18925f279f0d735664e5bc88b0ee))
+* **repos:** declare two merge flow fixture repositories ([#467](https://github.com/dryvist/tofu-github/issues/467)) ([6b1c402](https://github.com/dryvist/tofu-github/commit/6b1c40206d4299844554d8ee1b0b3bef8e1f00fa))
+
+
+### Bug Fixes
+
+* **config:** remove four repository entries from the dryvist config ([#465](https://github.com/dryvist/tofu-github/issues/465)) ([9ad8f45](https://github.com/dryvist/tofu-github/commit/9ad8f451d5cd9101dd4c53916d51561fbc7d6e97))
+* **locals:** read the private repo overrides without a conditional ([#466](https://github.com/dryvist/tofu-github/issues/466)) ([3911808](https://github.com/dryvist/tofu-github/commit/3911808e1df08371b26aa87036f0e856f2d7c2a5))
+
 ## [1.53.0](https://github.com/dryvist/tofu-github/compare/v1.52.0...v1.53.0) (2026-11-15)
 
 
