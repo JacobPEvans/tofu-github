@@ -944,3 +944,50 @@ run "fork_approval_defaults_to_all_external_contributors" {
     error_message = "The built-in Default runner group must stay visible to all repositories and serve public ones."
   }
 }
+
+run "lane_labels_apply_to_every_enumerated_repo" {
+  command = plan
+
+  variables {
+    github_owner              = "example-org"
+    dryvist_org_extras        = false
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = ["sample", "plain"]
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition = alltrue([
+      for repo in data.github_repositories.org.names :
+      alltrue([
+        for lane in local.lane_labels :
+        contains(keys(local.repo_labels), "${repo}/${lane.name}")
+      ])
+    ])
+    error_message = "Every enumerated repository must be keyed for all four lane labels."
+  }
+
+  assert {
+    condition = (
+      local.repo_labels["sample/land-first"].color == "0e8a16" &&
+      local.repo_labels["sample/land-first"].description == "Fast lane: fast checks only before merge" &&
+      local.repo_labels["sample/preflight"].color == "fbca04" &&
+      local.repo_labels["sample/checks:deferred"].color == "c5def5" &&
+      local.repo_labels["sample/auto-revert"].color == "d93f0b"
+    )
+    error_message = "The lane labels must keep their declared colours and descriptions."
+  }
+}
