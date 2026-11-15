@@ -14,7 +14,7 @@ variable "markdown_lint_enforcement" {
 
 variable "conventions_enforcement" {
   description = <<-EOT
-    Org repo-conventions presence checks: LICENSE, AGENTS.md, Nix dev shell, release-please config. Evaluate reports without blocking; workflow defaults to WARN (exit 0). CONVENTIONS_STRICT repo variable opts repos into failure; activate when Insights shows the fleet is green.
+    Org repo-conventions presence checks: LICENSE, AGENTS.md, Nix dev shell, release-please config. Evaluate reports without blocking; the CONVENTIONS_STRICT repo variable opts a repo into failure.
   EOT
   type        = string
   default     = "evaluate"
@@ -118,7 +118,7 @@ variable "org_gitflow_main_enforcement" {
 
 variable "org_gitflow_develop_enforcement" {
   description = <<-EOT
-    Git-flow develop applies only to local.gitflow_repos: PRs (no direct pushes), merge methods from config/rulesets-defaults.yml. Its only rule is the Conventional-Commits-or-merge message pattern, so main back-merges and conventional feature-squash subjects pass; signatures are enforced by org-gitflow-base and org-wide rulesets.
+    Git-flow develop applies only to local.gitflow_repos: PRs (no direct pushes), merge methods from config/rulesets-defaults.yml, and the Conventional-Commits-or-merge message pattern; signatures are enforced by org-gitflow-base and org-wide rulesets.
   EOT
   type        = string
   default     = "active"
@@ -177,6 +177,12 @@ variable "org_code_scanning_enforcement" {
     condition     = contains(["disabled", "evaluate", "active"], var.org_code_scanning_enforcement)
     error_message = "org_code_scanning_enforcement must be one of: disabled, evaluate, active."
   }
+}
+
+variable "unmanaged_repositories" {
+  description = "Repositories whose labels are not read at plan time; their labels get no import."
+  type        = set(string)
+  default     = []
 }
 
 variable "codeql_import_enabled" {

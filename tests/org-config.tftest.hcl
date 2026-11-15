@@ -1030,3 +1030,52 @@ run "merge_tier_property_declared_and_set_per_repository" {
     error_message = "The branch commit pattern must accept merge subjects, conventional subjects and native reverts of conventional subjects only."
   }
 }
+
+run "unmanaged_repository_labels_are_not_read" {
+  command = plan
+
+  variables {
+    github_owner              = "JacobPEvans"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+    unmanaged_repositories    = ["client"]
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = ["client", "sample"]
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repository_file.labels
+    values = {
+      content = "[{\"name\":\"bug\",\"color\":\"d73a4a\",\"description\":\"Defect\"}]"
+    }
+  }
+
+  override_resource {
+    target = github_organization_custom_properties.family
+    values = {
+      default_value = null
+    }
+  }
+
+  assert {
+    condition     = keys(data.github_issue_labels.existing) == ["sample"]
+    error_message = "A plan must read existing labels only for repositories outside unmanaged_repositories."
+  }
+
+  assert {
+    condition     = toset(keys(github_issue_label.org)) == toset(["client/bug", "sample/bug"])
+    error_message = "Label resources must stay in the configuration for every enumerated repository."
+  }
+}
