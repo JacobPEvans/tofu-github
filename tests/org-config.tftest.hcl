@@ -155,9 +155,10 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   assert {
     condition = (
       length(github_actions_variable.pr_reconcile_ci_fix_workflow) == 1 &&
-      github_actions_variable.pr_reconcile_ci_fix_workflow[0].repository == ".github-ai" &&
+      github_actions_variable.pr_reconcile_ci_fix_workflow[0].repository == local.pr_reconcile_config.sweep_repository &&
       github_actions_variable.pr_reconcile_ci_fix_workflow[0].variable_name == "PR_RECONCILE_CI_FIX_WORKFLOW" &&
-      github_actions_variable.pr_reconcile_ci_fix_workflow[0].value == "openhands-ci-fix.yml"
+      github_actions_variable.pr_reconcile_ci_fix_workflow[0].value == local.pr_reconcile_config.ci_fix_workflow &&
+      can(regex("\\.ya?ml$", github_actions_variable.pr_reconcile_ci_fix_workflow[0].value))
     )
     error_message = "The CI fix workflow variable must come from the owner's pr-reconcile.yml."
   }
