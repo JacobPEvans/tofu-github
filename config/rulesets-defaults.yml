@@ -77,3 +77,9 @@ actions:
   sha_pinning_required: false
   default_workflow_permissions: read
   can_approve_pull_request_reviews: false
+
+# Consumed by github_organization_ruleset.org_topic_branches and
+# github_organization_ruleset.org_green_branch in rulesets-green-topic.tf.
+shared_branches:
+  topic_enforcement: active
+  green_enforcement: active

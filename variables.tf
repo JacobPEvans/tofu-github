@@ -239,32 +239,6 @@ variable "org_branch_write_restriction_enforcement" {
   }
 }
 
-variable "org_topic_branches_enforcement" {
-  description = <<-EOT
-    Org-wide ruleset that blocks force pushes on refs/heads/topic/** for every actor.
-  EOT
-  type        = string
-  default     = "active"
-
-  validation {
-    condition     = contains(["disabled", "evaluate", "active"], var.org_topic_branches_enforcement)
-    error_message = "org_topic_branches_enforcement must be one of: disabled, evaluate, active."
-  }
-}
-
-variable "org_green_branch_enforcement" {
-  description = <<-EOT
-    Org-wide ruleset that blocks force pushes and deletion on refs/heads/green for every actor.
-  EOT
-  type        = string
-  default     = "active"
-
-  validation {
-    condition     = contains(["disabled", "evaluate", "active"], var.org_green_branch_enforcement)
-    error_message = "org_green_branch_enforcement must be one of: disabled, evaluate, active."
-  }
-}
-
 variable "automation_bypass_app_ids" {
   description = <<-EOT
     Required workspace list with no default: GitHub App IDs allowed to create/update branches covered by the restriction. Non-empty avoids locking out all automation; include every branch-writer (Actions, dependency-update, release, and org apps).

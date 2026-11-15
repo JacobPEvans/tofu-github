@@ -12,7 +12,7 @@
 resource "github_organization_ruleset" "org_topic_branches" {
   name        = "org-topic-branches"
   target      = "branch"
-  enforcement = var.org_topic_branches_enforcement
+  enforcement = local.rulesets_defaults.shared_branches.topic_enforcement
 
   conditions {
     ref_name {
@@ -33,7 +33,7 @@ resource "github_organization_ruleset" "org_topic_branches" {
 resource "github_organization_ruleset" "org_green_branch" {
   name        = "org-green-branch"
   target      = "branch"
-  enforcement = var.org_green_branch_enforcement
+  enforcement = local.rulesets_defaults.shared_branches.green_enforcement
 
   conditions {
     ref_name {
