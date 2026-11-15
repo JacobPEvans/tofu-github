@@ -63,8 +63,4 @@ resource "github_repository_ruleset" "merge_queue" {
       error_message = "merge_queue.grouping_strategy in config/rulesets-defaults.yml must be ALLGREEN."
     }
   }
-
-  # A renamed repo only answers to its new name after module.repo_settings
-  # applies the rename.
-  depends_on = [module.repo_settings]
 }

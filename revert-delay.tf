@@ -15,6 +15,4 @@ resource "github_repository_environment" "revert_delay" {
   repository  = each.value
   environment = "revert-delay"
   wait_timer  = 15
-
-  depends_on = [module.repo_settings]
 }
