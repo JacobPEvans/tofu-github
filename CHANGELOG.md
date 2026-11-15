@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.53.0](https://github.com/dryvist/tofu-github/compare/v1.52.0...v1.53.0) (2026-11-15)
+
+
+### Features
+
+* **merge-tier:** declare the merge_tier repository property ([#463](https://github.com/dryvist/tofu-github/issues/463)) ([ba77565](https://github.com/dryvist/tofu-github/commit/ba77565a0e90a2e8c4cbbad5375c08dbac2610b5))
+
 ## [1.52.0](https://github.com/dryvist/tofu-github/compare/v1.51.2...v1.52.0) (2026-11-14)
 
 
