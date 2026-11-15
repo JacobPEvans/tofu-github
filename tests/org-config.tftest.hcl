@@ -998,4 +998,21 @@ run "merge_tier_property_declared_and_set_per_repository" {
     )
     error_message = "Repositories without a merge_tier entry must carry the legacy default."
   }
+
+  assert {
+    condition = (
+      !local.rulesets_defaults.merge_queue.force_standard &&
+      local.merge_tier_effective == local.merge_tier_declared
+    )
+    error_message = "With the rollback switch off, every repository must get its declared tier."
+  }
+
+  assert {
+    condition = (
+      local.merge_tier_if_forced["sample"] == "standard" &&
+      local.merge_tier_if_forced[".github"] == "legacy" &&
+      !contains(values(local.merge_tier_if_forced), "hot")
+    )
+    error_message = "The rollback switch must turn hot into standard and leave every other tier as declared."
+  }
 }

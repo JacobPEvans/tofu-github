@@ -42,6 +42,22 @@ branch_protection:
     - squash
     - rebase
 
+# Consumed by github_repository_ruleset.merge_queue in merge-queue.tf, one
+# ruleset per repository with `merge_tier: hot` in the selected org's repos.yml.
+merge_queue:
+  # Rollback switch: true gives every hot repository the standard tier, which
+  # removes its queue ruleset and sets its merge_tier property in one apply.
+  force_standard: false
+  enforcement: active
+  merge_method: SQUASH
+  # Must stay ALLGREEN: merge-queue.tf refuses any other value.
+  grouping_strategy: ALLGREEN
+  max_entries_to_build: 5
+  max_entries_to_merge: 5
+  min_entries_to_merge: 1
+  min_entries_to_merge_wait_minutes: 0
+  check_response_timeout_minutes: 30
+
 # Consumed by restapi_object.org_gitflow_main and
 # restapi_object.org_gitflow_develop in rulesets-gitflow.tf for repos opted in
 # via `gitflow: true` in the selected org's repos.yml.
@@ -77,3 +93,9 @@ actions:
   sha_pinning_required: false
   default_workflow_permissions: read
   can_approve_pull_request_reviews: false
+
+# Consumed by github_organization_ruleset.org_topic_branches and
+# github_organization_ruleset.org_green_branch in rulesets-green-topic.tf.
+shared_branches:
+  topic_enforcement: active
+  green_enforcement: active

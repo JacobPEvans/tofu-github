@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   ci-fix:
-    uses: JacobPEvans/.github-ai/.github/workflows/cc-ci-fix.yml@72a41f6b416a8048d42c040ed1c519d961b71280 # feat/openhands-agent
+    uses: JacobPEvans/.github-ai/.github/workflows/cc-ci-fix.yml@1bbfa5817bcb8f380c3607960f0b795b49c72f91 # v2.11.2
     secrets: inherit
     with:
       runner_label: ${{ (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && 'review' || 'ubuntu-latest' }}
