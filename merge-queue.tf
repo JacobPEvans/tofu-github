@@ -7,9 +7,22 @@
 # A repo's merge gate must report on merge_group before it goes hot, or queued
 # PRs stall.
 locals {
+  merge_tier_declared = {
+    for name, cfg in local.managed_repos : name => try(cfg.merge_tier, "legacy")
+  }
+  # The tiers with the rollback switch on: hot becomes standard, the rest stay.
+  merge_tier_if_forced = {
+    for name, tier in local.merge_tier_declared : name => tier == "hot" ? "standard" : tier
+  }
+  # The tier each repository really gets; merge-tier.tf and hot_repos read this.
+  merge_tier_effective = (
+    local.rulesets_defaults.merge_queue.force_standard
+    ? local.merge_tier_if_forced
+    : local.merge_tier_declared
+  )
   hot_repos = [
     for name, cfg in local.managed_repos : name
-    if try(cfg.merge_tier, "legacy") == "hot" && !try(cfg.archived, false)
+    if local.merge_tier_effective[name] == "hot" && !try(cfg.archived, false)
   ]
 }
 
