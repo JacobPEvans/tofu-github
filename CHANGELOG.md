@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.56.0](https://github.com/dryvist/tofu-github/compare/v1.55.0...v1.56.0) (2026-11-15)
+
+
+### Features
+
+* **merge-tier:** add a switch that turns every hot repository into a standard one ([#479](https://github.com/dryvist/tofu-github/issues/479)) ([0574a2e](https://github.com/dryvist/tofu-github/commit/0574a2e4453a99fbb70e1a9ed71cb75d3de4fb4f))
+* **rulesets:** add a merge queue ruleset for every hot repository ([#471](https://github.com/dryvist/tofu-github/issues/471)) ([b51454b](https://github.com/dryvist/tofu-github/commit/b51454b0c8f8fc1b86684fbb5a08c0c85747ccbf))
+
+
+### Bug Fixes
+
+* **rulesets:** accept native revert subjects in the branch commit pattern ([#481](https://github.com/dryvist/tofu-github/issues/481)) ([79bd2cb](https://github.com/dryvist/tofu-github/commit/79bd2cb6c56108ed2469872c395254bee69e1686))
+
 ## [1.55.0](https://github.com/dryvist/tofu-github/compare/v1.54.0...v1.55.0) (2026-11-15)
 
 

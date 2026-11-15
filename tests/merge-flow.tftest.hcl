@@ -329,3 +329,239 @@ run "adds_no_revert_delay_environment_without_a_gate_caller" {
     error_message = "A repository without a `gate` job must get no revert-delay environment."
   }
 }
+
+# A targeted plan includes whatever its targets depend on. None of the six
+# per-repository resources below may depend on module.repo_settings, so the
+# module has no instance in this plan.
+run "targeted_plan_of_per_repository_extras_names_no_repo_settings_address" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  plan_options {
+    target = [
+      github_repository_custom_property.merge_tier,
+      github_repository_custom_property.ci_gate,
+      github_repository_custom_property.family,
+      github_repository_custom_property.gitflow,
+      github_repository_ruleset.merge_queue,
+      github_repository_environment.revert_delay,
+    ]
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition = (
+      github_repository_custom_property.merge_tier["sample"].property_value == toset(["hot"]) &&
+      contains(keys(github_repository_custom_property.gitflow), "sample") &&
+      contains(keys(github_repository_custom_property.ci_gate), "sample") &&
+      contains(keys(github_repository_ruleset.merge_queue), "sample")
+    )
+    error_message = "The targeted plan must cover the properties and the queue ruleset of the fixture repository."
+  }
+
+  assert {
+    condition     = length(module.repo_settings) == 0
+    error_message = "A targeted plan of the per-repository properties, queue rulesets and environments must not include module.repo_settings."
+  }
+}
+
+# A ruleset whose conditions name the `gitflow` custom property cannot apply
+# before that property exists: on a fresh org GitHub rejects it with 422
+# "Invalid property 'gitflow' with source 'custom'". Each run below targets
+# one conditioned ruleset alone; a targeted plan includes whatever its targets
+# depend on, so the property resource being planned at all is the proof of
+# `depends_on = [github_organization_custom_properties.gitflow]` — and the
+# assertion on the property is what fails if that dependency is absent.
+run "org_gitflow_main_plans_the_gitflow_custom_property" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  plan_options {
+    target = [restapi_object.org_gitflow_main]
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition = (
+      github_organization_custom_properties.gitflow.property_name == "gitflow"
+    )
+    error_message = "org-gitflow-main conditions on the `gitflow` property, so its plan must include github_organization_custom_properties.gitflow."
+  }
+}
+
+run "org_gitflow_develop_plans_the_gitflow_custom_property" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  plan_options {
+    target = [restapi_object.org_gitflow_develop]
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition = (
+      github_organization_custom_properties.gitflow.property_name == "gitflow"
+    )
+    error_message = "org-gitflow-develop conditions on the `gitflow` property, so its plan must include github_organization_custom_properties.gitflow."
+  }
+}
+
+run "org_branch_protection_plans_the_gitflow_custom_property" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  plan_options {
+    target = [restapi_object.org_branch_protection]
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition = (
+      github_organization_custom_properties.gitflow.property_name == "gitflow"
+    )
+    error_message = "org-branch-protection excludes git-flow repos through the `gitflow` property, so its plan must include github_organization_custom_properties.gitflow."
+  }
+}
+
+run "org_review_gate_plans_the_gitflow_custom_property" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  plan_options {
+    target = [restapi_object.org_review_gate]
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition = (
+      github_organization_custom_properties.gitflow.property_name == "gitflow"
+    )
+    error_message = "org-review-gate excludes git-flow repos through the `gitflow` property, so its plan must include github_organization_custom_properties.gitflow."
+  }
+}
+
+run "org_release_freeze_plans_the_gitflow_custom_property" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  plan_options {
+    target = [github_organization_ruleset.org_release_freeze]
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition = (
+      length(github_organization_ruleset.org_release_freeze) == 1 &&
+      github_organization_custom_properties.gitflow.property_name == "gitflow"
+    )
+    error_message = "org-release-freeze conditions on the `gitflow` property, so its plan must include github_organization_custom_properties.gitflow."
+  }
+}

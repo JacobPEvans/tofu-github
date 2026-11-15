@@ -198,18 +198,21 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
 
   assert {
     condition = (
-      length(local.managed_repos) == 3 &&
+      length(local.managed_repos) == 4 &&
       local.managed_repos[".github"].visibility == "public" &&
       local.managed_repos[".github-private"].visibility == "private" &&
       local.managed_repos[".github-private"].description == "Members-only org profile and index" &&
       !try(local.managed_repos[".github-private"].archived, false) &&
+      local.managed_repos[".agents"].visibility == "public" &&
+      local.managed_repos[".agents"].description == "Organization-wide agent skills" &&
+      !try(local.managed_repos[".agents"].archived, false) &&
       local.managed_repos["sample"].visibility == "public"
     )
     error_message = "Both org profile repos must always be managed alongside repos enumerated from GitHub."
   }
 
   assert {
-    condition     = length(module.repo_settings) == 3
+    condition     = length(module.repo_settings) == 4
     error_message = "Every managed repository must receive the shared repository settings module."
   }
 
@@ -220,6 +223,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
       toset(github_organization_custom_properties.family.allowed_values) == toset(local.family_values) &&
       length(github_repository_custom_property.family) == 0 &&
       github_repository_custom_property.gitflow[".github-private"].property_value == toset(["false"]) &&
+      github_repository_custom_property.gitflow[".agents"].property_value == toset(["false"]) &&
       github_repository_custom_property.ci_gate[".github-private"].property_value == toset(["false"])
     )
     error_message = "Family must remain optional and unset until configured, while existing repo properties cover the private profile repo."
@@ -647,7 +651,7 @@ run "placeholder_org_disables_org_specific_extras" {
   }
 
   assert {
-    condition     = length(module.repo_settings) == 3
+    condition     = length(module.repo_settings) == 4
     error_message = "Shared repository settings must remain enabled."
   }
 }
@@ -1014,5 +1018,68 @@ run "merge_tier_property_declared_and_set_per_repository" {
       !contains(values(local.merge_tier_if_forced), "hot")
     )
     error_message = "The rollback switch must turn hot into standard and leave every other tier as declared."
+  }
+
+  assert {
+    condition = (
+      can(regex(local.gitflow_commit_message_pattern, "Revert \"feat: add a thing (#12)\"")) &&
+      can(regex(local.gitflow_commit_message_pattern, "Merge branch 'main' into develop")) &&
+      can(regex(local.gitflow_commit_message_pattern, "Revert \"Revert \"fix: pin the action\"\"")) &&
+      can(regex(local.gitflow_commit_message_pattern, "fix(ci): pin the action")) &&
+      !can(regex(local.gitflow_commit_message_pattern, "Reverted something")) &&
+      !can(regex(local.gitflow_commit_message_pattern, "Revert \"update stuff\"")) &&
+      !can(regex(local.gitflow_commit_message_pattern, "Revert feat: add a thing")) &&
+      !can(regex(local.gitflow_commit_message_pattern, "update stuff"))
+    )
+    error_message = "The branch commit pattern must accept merge subjects, conventional subjects and native reverts of conventional subjects only."
+  }
+}
+
+run "unmanaged_repository_labels_are_not_read" {
+  command = plan
+
+  variables {
+    github_owner              = "JacobPEvans"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+    unmanaged_repositories    = ["client"]
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = ["client", "sample"]
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repository_file.labels
+    values = {
+      content = "[{\"name\":\"bug\",\"color\":\"d73a4a\",\"description\":\"Defect\"}]"
+    }
+  }
+
+  override_resource {
+    target = github_organization_custom_properties.family
+    values = {
+      default_value = null
+    }
+  }
+
+  assert {
+    condition     = keys(data.github_issue_labels.existing) == ["sample"]
+    error_message = "A plan must read existing labels only for repositories outside unmanaged_repositories."
+  }
+
+  assert {
+    condition     = toset(keys(github_issue_label.org)) == toset(["client/bug", "sample/bug"])
+    error_message = "Label resources must stay in the configuration for every enumerated repository."
   }
 }

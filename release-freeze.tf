@@ -32,6 +32,8 @@ resource "github_organization_ruleset" "org_release_freeze" {
       }
     }
   }
+
+  depends_on = [github_organization_custom_properties.gitflow]
 }
 
 moved {
