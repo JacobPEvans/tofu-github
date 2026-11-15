@@ -239,6 +239,48 @@ variable "org_branch_write_restriction_enforcement" {
   }
 }
 
+variable "merge_queue_enforcement" {
+  description = <<-EOT
+    Enforcement of the per-repository merge-queue ruleset on every repository with merge_tier hot.
+  EOT
+  type        = string
+  default     = "active"
+
+  validation {
+    condition     = contains(["disabled", "evaluate", "active"], var.merge_queue_enforcement)
+    error_message = "merge_queue_enforcement must be one of: disabled, evaluate, active."
+  }
+}
+
+variable "merge_queue" {
+  description = <<-EOT
+    Merge queue settings for every repository with merge_tier hot.
+  EOT
+  type = object({
+    merge_method                      = string
+    grouping_strategy                 = string
+    max_entries_to_build              = number
+    max_entries_to_merge              = number
+    min_entries_to_merge              = number
+    min_entries_to_merge_wait_minutes = number
+    check_response_timeout_minutes    = number
+  })
+  default = {
+    merge_method                      = "SQUASH"
+    grouping_strategy                 = "ALLGREEN"
+    max_entries_to_build              = 5
+    max_entries_to_merge              = 5
+    min_entries_to_merge              = 1
+    min_entries_to_merge_wait_minutes = 0
+    check_response_timeout_minutes    = 30
+  }
+
+  validation {
+    condition     = var.merge_queue.grouping_strategy == "ALLGREEN"
+    error_message = "merge_queue.grouping_strategy must be ALLGREEN: with per-entry lanes HEADGREEN lets a fast entry carry a failed entry in."
+  }
+}
+
 variable "automation_bypass_app_ids" {
   description = <<-EOT
     Required workspace list with no default: GitHub App IDs allowed to create/update branches covered by the restriction. Non-empty avoids locking out all automation; include every branch-writer (Actions, dependency-update, release, and org apps).

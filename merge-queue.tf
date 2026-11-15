@@ -22,7 +22,7 @@ resource "github_repository_ruleset" "merge_queue" {
   repository  = each.key
   name        = "merge-queue"
   target      = "branch"
-  enforcement = "active"
+  enforcement = var.merge_queue_enforcement
 
   conditions {
     ref_name {
@@ -33,13 +33,13 @@ resource "github_repository_ruleset" "merge_queue" {
 
   rules {
     merge_queue {
-      merge_method                      = "SQUASH"
-      grouping_strategy                 = "ALLGREEN"
-      max_entries_to_build              = 5
-      max_entries_to_merge              = 5
-      min_entries_to_merge              = 1
-      min_entries_to_merge_wait_minutes = 0
-      check_response_timeout_minutes    = 30
+      merge_method                      = var.merge_queue.merge_method
+      grouping_strategy                 = var.merge_queue.grouping_strategy
+      max_entries_to_build              = var.merge_queue.max_entries_to_build
+      max_entries_to_merge              = var.merge_queue.max_entries_to_merge
+      min_entries_to_merge              = var.merge_queue.min_entries_to_merge
+      min_entries_to_merge_wait_minutes = var.merge_queue.min_entries_to_merge_wait_minutes
+      check_response_timeout_minutes    = var.merge_queue.check_response_timeout_minutes
     }
   }
 
