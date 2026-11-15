@@ -8,7 +8,7 @@ mock_provider "github" {
   mock_data "github_repository" {
     defaults = {
       default_branch = "main"
-      full_name      = "JacobPEvans/.github"
+      full_name      = "example-org/.github"
       repo_id        = 1
       topics         = []
       visibility     = "public"
