@@ -21,7 +21,7 @@ data "github_repositories" "public_for_codeql" {
 data "external" "codeql_import" {
   program = [
     "python3", "-c", "import os, json; " +
-      "print(json.dumps({'codeql_import_enabled': os.environ.get('CODEQL_IMPORT_ENABLED', 'true').lower() in ('1', 'true', 'yes')}))"
+    "print(json.dumps({'codeql_import_enabled': os.environ.get('CODEQL_IMPORT_ENABLED', 'true').lower() in ('1', 'true', 'yes')}))"
   ]
 }
 
