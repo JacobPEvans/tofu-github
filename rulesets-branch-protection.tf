@@ -99,6 +99,8 @@ resource "restapi_object" "org_branch_protection" {
       { type = "non_fast_forward" },
     ]
   })
+
+  depends_on = [github_organization_custom_properties.gitflow]
 }
 
 # Org-wide signature enforcement on every branch.
@@ -240,4 +242,6 @@ resource "restapi_object" "org_review_gate" {
       [for actor_id in toset(local.release_app_ids) : { actor_id = actor_id, actor_type = "Integration", bypass_mode = "pull_request" }],
     )
   })
+
+  depends_on = [github_organization_custom_properties.gitflow]
 }
