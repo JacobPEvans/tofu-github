@@ -1,7 +1,8 @@
 # The org-wide label set, applied to every unarchived repo.
 #
-# The single definition is the central label file named in config/central.yml
-# (data.github_repository_file.labels), shared by every org. Repos are enumerated at plan time
+# Most of the set is the central label file named in config/central.yml
+# (data.github_repository_file.labels), shared by every org; local.lane_labels
+# adds the four merge-lane labels declared below. Repos are enumerated at plan time
 # (data.github_repositories.org), so no repo name is written here and a
 # new repo is covered on the next apply.
 #
@@ -9,7 +10,35 @@
 # repo carries beyond the canonical set are left alone. An existing label with
 # the same name is updated in place.
 locals {
-  labels = yamldecode(data.github_repository_file.labels.content)
+  labels = concat(yamldecode(data.github_repository_file.labels.content), local.lane_labels)
+
+  # The merge-lane labels, declared here so every repo carries them even if
+  # the central set drops them: land-first merges with fast checks only,
+  # preflight requests checks ahead of the gate, checks:deferred moves heavy
+  # checks past merge, and auto-revert reverts a deferred merge that
+  # regressed.
+  lane_labels = [
+    {
+      name        = "land-first"
+      color       = "0e8a16"
+      description = "Fast lane: fast checks only before merge"
+    },
+    {
+      name        = "preflight"
+      color       = "fbca04"
+      description = "Preflight requested"
+    },
+    {
+      name        = "checks:deferred"
+      color       = "c5def5"
+      description = "Heavy checks deferred to post-merge"
+    },
+    {
+      name        = "auto-revert"
+      color       = "d93f0b"
+      description = "Automatic revert of a deferred merge"
+    },
+  ]
 
   repo_labels = {
     for pair in setproduct(data.github_repositories.org.names, local.labels) :
