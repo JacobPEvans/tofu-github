@@ -163,20 +163,19 @@ config/           # shared policy defaults and owner-scoped config
 config/orgs/      # selected by github_owner; files are optional
 ```
 
-CODEOWNERS is not committed or managed in this repo. A static
-`.github/CODEOWNERS` would bake a specific identity into the source tree.
+CODEOWNERS is not committed here; a static `.github/CODEOWNERS` would bake a
+specific identity into the source tree.
 
-`config/` holds shared ruleset defaults. Each workspace selects its organization
-through `github_owner`, which also selects `config/orgs/<github_owner>/` when
-present. A missing org directory or config file means defaults or no opt-in,
-and repository metadata comes from GitHub data sources.
-`config/commit-message-pattern.txt` and `config/rulesets-defaults.yml` remain
-shared. The label set is read from
-the central label file named in `config/central.yml` by `data.tf` and
-applied by `labels.tf`; label sets are not stored in `config/`. Canonical text
-the org doesn't author — MIT LICENSE body, CODE_OF_CONDUCT, etc. — is fetched
-at apply time from a trustworthy upstream via `data "http"`, not committed as
-a local template.
+`config/` holds shared ruleset defaults. Each workspace selects its
+organization through `github_owner`, which also selects
+`config/orgs/<github_owner>/` when present; a missing org directory or config
+file means defaults or no opt-in, and repository metadata comes from GitHub
+data sources. `config/commit-message-pattern.txt` and
+`config/rulesets-defaults.yml` remain shared. The label set is read from the
+central label file named in `config/central.yml` by `data.tf` and applied by
+`labels.tf`; label sets are not stored in `config/`. Canonical text the org
+doesn't author — MIT LICENSE body, CODE_OF_CONDUCT, etc. — is fetched at apply
+time from a trustworthy upstream via `data "http"`, not committed locally.
 
 `private_repo_overrides` is read from the protected OpenBao KV v2 document at
 `secret/infrastructure/tofu-github/private-overrides` for orgs whose merge-gate config
@@ -195,19 +194,15 @@ key.
   cd tofu-github && direnv allow   # provides tofu, sops, linters
   ```
 
-- **A reachable Terrakube workspace.** State, locking, and remote
-  execution come from the homelab Terrakube instance; the `tofu-github`
-  workspace is
-  defined as code in the platform repo. The platform is deliberately
-  not-24/7 — power its node on for off-hours work.
+- **A reachable Terrakube workspace.** State, locking, and remote execution
+  come from the homelab Terrakube instance; the `tofu-github` workspace is
+  defined as code in the platform repo. The platform is deliberately not-24/7
+  — power its node on for off-hours work.
 
 - **One-time login per machine** (no keychain, no stored passwords). The
-  `TF_CLOUD_*` coordinates (`TF_CLOUD_HOSTNAME`, `TF_CLOUD_ORGANIZATION`,
-  `TF_WORKSPACE`) are a fleet-wide fact owned by the platform, stored once in
-  OpenBao (`secret/platform/terrakube/main`). `.envrc` pulls them at
-  `direnv allow` via the platform AppRole (`BAO_ADDR` + role/secret ID from the
-  operator's environment) — so nothing sensitive, not even the internal
-  endpoint, is committed in this repo:
+  `TF_CLOUD_*` coordinates are a fleet-wide fact owned by the platform, stored
+  once in OpenBao (`secret/platform/terrakube/main`). `.envrc` pulls them at
+  `direnv allow` via the platform AppRole, so nothing sensitive is committed:
 
   ```bash
   tofu login "$TF_CLOUD_HOSTNAME"
@@ -215,9 +210,9 @@ key.
 
   Requires membership in the org's `terrakube-admins` team.
 
-No AWS account, no aws-vault, no local `GITHUB_TOKEN`: `providers.tf`
-mints a short-lived GitHub App installation token from OpenBao on every
-run, through an `ephemeral` resource, so it is never stored or written to state.
+No AWS account, no aws-vault, no local `GITHUB_TOKEN`: `providers.tf` mints a
+short-lived GitHub App installation token from OpenBao on every run through an
+`ephemeral` resource, so it is never stored or written to state.
 
 ## Usage
 
@@ -237,10 +232,10 @@ tofu init -backend=false && tofu validate
 
 **Enforcement defaults vary by ruleset.** See [Applying](docs/agents/applying.md).
 
-A repository created or renamed in an apply gets its custom properties, its
-merge queue ruleset, and its `revert-delay` environment on the next apply.
-Those six resources carry no dependency on `module.repo_settings`, so a
-targeted plan of them includes no repository settings.
+A repository created or renamed in an apply gets its custom properties, merge
+queue ruleset, and `revert-delay` environment on the next apply. Those six
+resources carry no dependency on `module.repo_settings`, so a targeted plan of
+them includes no repository settings.
 
 ---
 
