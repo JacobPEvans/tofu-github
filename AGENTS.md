@@ -30,3 +30,12 @@ Full docs live under `docs/agents/`, one topic per page:
 - [Cost policy](docs/agents/cost-policy.md) — what's free vs. paid across
   plans, GHAS pricing, metered Actions/Packages usage, subscription
   products, and the required PR cost-impact checklist.
+
+## CI checks
+
+- Markdown Lint -> `.agents/skills/ci-markdown-lint` (markdownlint)
+- File Size -> `.agents/skills/ci-file-size`
+- OpenTofu CI -> `.agents/skills/ci-tofu-ci` (tofu fmt/validate, tflint)
+- Dependency Review -> `.agents/skills/ci-dependency-review`
+- Workflow Security (zizmor) -> `.agents/skills/ci-zizmor`
+- Uses Resolve -> `.agents/skills/ci-uses-resolve`
