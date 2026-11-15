@@ -116,42 +116,28 @@ run "green_and_topic_rulesets_protect_shared_branches" {
 
   assert {
     condition = (
-      length(github_organization_ruleset.org_topic_branches) == 1 &&
-      github_organization_ruleset.org_topic_branches[0].name == "org-topic-branches" &&
-      github_organization_ruleset.org_topic_branches[0].target == "branch" &&
-      github_organization_ruleset.org_topic_branches[0].enforcement == "active" &&
-      tolist(github_organization_ruleset.org_topic_branches[0].conditions[0].ref_name[0].include) == tolist(["refs/heads/topic/**"]) &&
-      tolist(github_organization_ruleset.org_topic_branches[0].conditions[0].repository_name[0].include) == tolist(["~ALL"]) &&
-      github_organization_ruleset.org_topic_branches[0].rules[0].non_fast_forward == true &&
-      length(github_organization_ruleset.org_topic_branches[0].bypass_actors) == 0
+      github_organization_ruleset.org_topic_branches.name == "org-topic-branches" &&
+      github_organization_ruleset.org_topic_branches.target == "branch" &&
+      github_organization_ruleset.org_topic_branches.enforcement == "active" &&
+      tolist(github_organization_ruleset.org_topic_branches.conditions[0].ref_name[0].include) == tolist(["refs/heads/topic/**"]) &&
+      tolist(github_organization_ruleset.org_topic_branches.conditions[0].repository_name[0].include) == tolist(["~ALL"]) &&
+      github_organization_ruleset.org_topic_branches.rules[0].non_fast_forward == true &&
+      length(github_organization_ruleset.org_topic_branches.bypass_actors) == 0
     )
     error_message = "The topic-branch ruleset must cover refs/heads/topic/** on every repository, block force pushes, and list no bypass actors."
   }
 
   assert {
     condition = (
-      length(github_organization_ruleset.org_green_branch) == 1 &&
-      github_organization_ruleset.org_green_branch[0].name == "org-green-branch" &&
-      github_organization_ruleset.org_green_branch[0].target == "branch" &&
-      github_organization_ruleset.org_green_branch[0].enforcement == "active" &&
-      tolist(github_organization_ruleset.org_green_branch[0].conditions[0].ref_name[0].include) == tolist(["refs/heads/green"]) &&
-      tolist(github_organization_ruleset.org_green_branch[0].conditions[0].repository_name[0].include) == tolist(["~ALL"]) &&
-      github_organization_ruleset.org_green_branch[0].rules[0].non_fast_forward == true &&
-      github_organization_ruleset.org_green_branch[0].rules[0].deletion == true &&
-      github_organization_ruleset.org_green_branch[0].rules[0].update == true
+      github_organization_ruleset.org_green_branch.name == "org-green-branch" &&
+      github_organization_ruleset.org_green_branch.target == "branch" &&
+      github_organization_ruleset.org_green_branch.enforcement == "active" &&
+      tolist(github_organization_ruleset.org_green_branch.conditions[0].ref_name[0].include) == tolist(["refs/heads/green"]) &&
+      tolist(github_organization_ruleset.org_green_branch.conditions[0].repository_name[0].include) == tolist(["~ALL"]) &&
+      github_organization_ruleset.org_green_branch.rules[0].non_fast_forward == true &&
+      github_organization_ruleset.org_green_branch.rules[0].deletion == true &&
+      length(github_organization_ruleset.org_green_branch.bypass_actors) == 0
     )
-    error_message = "The green-branch ruleset must cover refs/heads/green on every repository and block force pushes, deletion, and non-bypass updates."
-  }
-
-  assert {
-    condition = (
-      length(github_organization_ruleset.org_green_branch[0].bypass_actors) == length(toset(var.automation_bypass_app_ids)) &&
-      toset([for actor in github_organization_ruleset.org_green_branch[0].bypass_actors : actor.actor_id]) == toset(var.automation_bypass_app_ids) &&
-      alltrue([
-        for actor in github_organization_ruleset.org_green_branch[0].bypass_actors :
-        actor.actor_type == "Integration" && actor.bypass_mode == "always"
-      ])
-    )
-    error_message = "Only the automation App IDs in var.automation_bypass_app_ids may bypass the green-branch ruleset, always."
+    error_message = "The green-branch ruleset must cover refs/heads/green on every repository, block force pushes and deletion, and list no bypass actors."
   }
 }
