@@ -944,3 +944,51 @@ run "fork_approval_defaults_to_all_external_contributors" {
     error_message = "The built-in Default runner group must stay visible to all repositories and serve public ones."
   }
 }
+
+run "merge_tier_property_declared_and_set_per_repository" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition = (
+      github_organization_custom_properties.merge_tier.value_type == "single_select" &&
+      github_organization_custom_properties.merge_tier.required &&
+      toset(github_organization_custom_properties.merge_tier.allowed_values) == toset(["legacy", "standard", "hot"]) &&
+      github_organization_custom_properties.merge_tier.default_value == "legacy" &&
+      github_organization_custom_properties.merge_tier.values_editable_by == "org_actors"
+    )
+    error_message = "The merge tier must be a required single select with the legacy default, editable only by org actors."
+  }
+
+  assert {
+    condition     = github_repository_custom_property.merge_tier["sample"].property_value == toset(["hot"])
+    error_message = "A repos.yml entry selecting merge_tier must set that exact value on its repository."
+  }
+
+  assert {
+    condition = (
+      github_repository_custom_property.merge_tier[".github"].property_value == toset(["legacy"]) &&
+      github_repository_custom_property.merge_tier[".github-private"].property_value == toset(["legacy"])
+    )
+    error_message = "Repositories without a merge_tier entry must carry the legacy default."
+  }
+}
