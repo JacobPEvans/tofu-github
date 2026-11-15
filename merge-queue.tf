@@ -22,7 +22,7 @@ resource "github_repository_ruleset" "merge_queue" {
   repository  = each.key
   name        = "merge-queue"
   target      = "branch"
-  enforcement = var.merge_queue_enforcement
+  enforcement = local.rulesets_defaults.merge_queue.enforcement
 
   conditions {
     ref_name {
@@ -33,13 +33,21 @@ resource "github_repository_ruleset" "merge_queue" {
 
   rules {
     merge_queue {
-      merge_method                      = var.merge_queue.merge_method
-      grouping_strategy                 = var.merge_queue.grouping_strategy
-      max_entries_to_build              = var.merge_queue.max_entries_to_build
-      max_entries_to_merge              = var.merge_queue.max_entries_to_merge
-      min_entries_to_merge              = var.merge_queue.min_entries_to_merge
-      min_entries_to_merge_wait_minutes = var.merge_queue.min_entries_to_merge_wait_minutes
-      check_response_timeout_minutes    = var.merge_queue.check_response_timeout_minutes
+      merge_method                      = local.rulesets_defaults.merge_queue.merge_method
+      grouping_strategy                 = local.rulesets_defaults.merge_queue.grouping_strategy
+      max_entries_to_build              = local.rulesets_defaults.merge_queue.max_entries_to_build
+      max_entries_to_merge              = local.rulesets_defaults.merge_queue.max_entries_to_merge
+      min_entries_to_merge              = local.rulesets_defaults.merge_queue.min_entries_to_merge
+      min_entries_to_merge_wait_minutes = local.rulesets_defaults.merge_queue.min_entries_to_merge_wait_minutes
+      check_response_timeout_minutes    = local.rulesets_defaults.merge_queue.check_response_timeout_minutes
+    }
+  }
+
+  lifecycle {
+    # With per-entry lanes HEADGREEN lets a fast entry carry a failed entry in.
+    precondition {
+      condition     = local.rulesets_defaults.merge_queue.grouping_strategy == "ALLGREEN"
+      error_message = "merge_queue.grouping_strategy in config/rulesets-defaults.yml must be ALLGREEN."
     }
   }
 
