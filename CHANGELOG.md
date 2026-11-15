@@ -18,7 +18,7 @@ Releases are automated via release-please from Conventional Commits.
 
 ### Bug Fixes
 
-* **config:** remove four repository entries from the dryvist config ([#465](https://github.com/dryvist/tofu-github/issues/465)) ([9ad8f45](https://github.com/dryvist/tofu-github/commit/9ad8f451d5cd9101dd4c53916d51561fbc7d6e97))
+* **config:** remove four repository entries from one owner config ([#465](https://github.com/dryvist/tofu-github/issues/465)) ([9ad8f45](https://github.com/dryvist/tofu-github/commit/9ad8f451d5cd9101dd4c53916d51561fbc7d6e97))
 * **locals:** read the private repo overrides without a conditional ([#466](https://github.com/dryvist/tofu-github/issues/466)) ([3911808](https://github.com/dryvist/tofu-github/commit/3911808e1df08371b26aa87036f0e856f2d7c2a5))
 
 ## [1.53.0](https://github.com/dryvist/tofu-github/compare/v1.52.0...v1.53.0) (2026-11-15)
