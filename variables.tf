@@ -105,7 +105,7 @@ variable "org_gitflow_base_enforcement" {
 
 variable "org_gitflow_main_enforcement" {
   description = <<-EOT
-    Git-flow main applies only to local.gitflow_repos: PRs (no direct pushes), merge commits only, thread resolution, Conventional-Commits-or-merge messages; signatures come from org-gitflow-base and the org-wide rulesets.
+    Git-flow main applies only to local.gitflow_repos: PRs (no direct pushes), merge commits only, thread resolution, and Conventional-Commits-or-merge messages; signatures are enforced by org-gitflow-base and org-wide rulesets.
   EOT
   type        = string
   default     = "active"
@@ -118,7 +118,7 @@ variable "org_gitflow_main_enforcement" {
 
 variable "org_gitflow_develop_enforcement" {
   description = <<-EOT
-    Git-flow develop applies only to local.gitflow_repos: PRs (no direct pushes), merge methods from config/rulesets-defaults.yml. Only the Conventional-Commits-or-merge message rule is set, so main back-merges and conventional squashes pass; signatures come from org-gitflow-base and the org-wide rulesets.
+    Git-flow develop applies only to local.gitflow_repos: PRs (no direct pushes), merge methods from config/rulesets-defaults.yml. Its only rule is the Conventional-Commits-or-merge message pattern, so main back-merges and conventional feature-squash subjects pass; signatures are enforced by org-gitflow-base and org-wide rulesets.
   EOT
   type        = string
   default     = "active"
@@ -131,7 +131,7 @@ variable "org_gitflow_develop_enforcement" {
 
 variable "org_release_freeze_enforcement" {
   description = <<-EOT
-    Git-flow repos require the release-freeze check on develop. Evaluate reports without blocking; activate once every git-flow repo calls the shared status workflow.
+    Git-flow repos require the release-freeze status check on develop. Evaluate reports without blocking; activate after every git-flow repo calls the shared status workflow.
   EOT
   type        = string
   default     = "evaluate"
@@ -144,7 +144,7 @@ variable "org_release_freeze_enforcement" {
 
 variable "org_copilot_review_enforcement" {
   description = <<-EOT
-    Pilot targets the branches and repos in selected copilot-review.yml, not property matches; expand it there. Paid: AI credits per review, no seats or pooled allowance; review_on_push=false caps about one review per PR.
+    Pilot targets explicit branches and repos in selected copilot-review.yml, not property matches; expand it there. Paid: AI credits per review, no seats or pooled allowance; review_on_push=false caps about one review per PR.
   EOT
   type        = string
   default     = "active"
@@ -202,7 +202,7 @@ variable "org_merge_gate_enforcement" {
 
 variable "merge_gate_strict_enforcement" {
   description = <<-EOT
-    org-merge-gate-strict-* required checks require pull requests to be up to date with their base branch, except the automation apps in merge-gate-strict.tf. Evaluate reports without blocking.
+    org-merge-gate-strict-* required checks require pull requests to be up to date with their base branch before merging, except for the automation apps in merge-gate-strict.tf. Evaluate reports in Insights without blocking.
   EOT
   type        = string
   default     = "evaluate"
@@ -304,4 +304,20 @@ variable "event_queue_webhook_enabled" {
   description = "Create the event queue org webhook from the intake records in Vault."
   type        = bool
   default     = false
+}
+
+variable "event_forwarder_enabled" {
+  description = "Enable the org-wide event-forwarder required workflow."
+  type        = bool
+  default     = false
+}
+
+variable "event_forwarder_enforcement" {
+  description = "Event-forwarder required-workflow enforcement mode."
+  type        = string
+  default     = "evaluate"
+  validation {
+    condition     = contains(["disabled", "evaluate", "active"], var.event_forwarder_enforcement)
+    error_message = "Use disabled, evaluate or active."
+  }
 }
