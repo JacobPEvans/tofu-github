@@ -155,19 +155,6 @@ variable "org_copilot_review_enforcement" {
   }
 }
 
-variable "org_push_protection_enforcement" {
-  description = <<-EOT
-    Native max_file_size and file_extension_restriction rules cover every repo/ref at the git layer, without workflow runs.
-  EOT
-  type        = string
-  default     = "active"
-
-  validation {
-    condition     = contains(["disabled", "evaluate", "active"], var.org_push_protection_enforcement)
-    error_message = "org_push_protection_enforcement must be one of: disabled, evaluate, active."
-  }
-}
-
 variable "org_code_scanning_enforcement" {
   description = "Require CodeQL default-setup results on public repositories' default branch and main before updates. Evaluate reports without blocking until every target repository has a configured CodeQL analysis."
   type        = string
@@ -259,6 +246,29 @@ variable "automation_bypass_app_ids" {
   }
 }
 
+# Organization-specific webhook intake for opt-in dryvist orgs. The Hermes
+# PR-review webhook sends pull_request events; created only when both variables
+# are set.
+variable "hermes_webhook_url" {
+  description = "Hermes PR-review intake URL; empty skips the webhook."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "hermes_webhook_secret" {
+  description = "GitHub HMAC signing secret (X-Hub-Signature-256); empty skips the webhook."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "event_queue_webhook_enabled" {
+  description = "Create the event queue org webhook from the intake records in Vault."
+  type        = bool
+  default     = false
+}
+
 # Workspace selectors.
 variable "github_owner" {
   description = "GitHub org login to manage: 1-39 letters, digits, or hyphens."
@@ -288,30 +298,6 @@ variable "org_automerge_manual_enforcement" {
     condition     = contains(["disabled", "evaluate", "active"], var.org_automerge_manual_enforcement)
     error_message = "org_automerge_manual_enforcement must be one of: disabled, evaluate, active."
   }
-}
-
-# Hermes PR-review webhook sends pull_request events; created only when both
-# variables are set.
-variable "hermes_webhook_url" {
-  description = "Hermes PR-review intake URL; empty skips the webhook."
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "hermes_webhook_secret" {
-  description = "GitHub HMAC signing secret (X-Hub-Signature-256); empty skips the webhook."
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-# Event queue intake for check_run and pull_request events. Off until the intake
-# records exist in Vault, so the plan never reads absent paths.
-variable "event_queue_webhook_enabled" {
-  description = "Create the event queue org webhook from the intake records in Vault."
-  type        = bool
-  default     = false
 }
 
 variable "event_forwarder_enabled" {

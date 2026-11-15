@@ -43,7 +43,7 @@ resource "github_actions_runner_group" "default" {
 
 # The group exists in every organisation with id 1; tests switch the adoption off.
 import {
-  for_each = var.codeql_import_enabled ? toset(["1"]) : toset([])
+  for_each = data.external.codeql_import.output.codeql_import_enabled ? toset(["1"]) : toset([])
   to       = github_actions_runner_group.default
   id       = each.value
 }

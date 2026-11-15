@@ -9,7 +9,7 @@
 resource "github_organization_ruleset" "org_push_protection" {
   name        = "org-push-protection"
   target      = "push"
-  enforcement = var.org_push_protection_enforcement
+  enforcement = "active"
 
   conditions {
     repository_name {

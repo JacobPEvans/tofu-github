@@ -97,7 +97,6 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   variables {
     github_owner              = "JacobPEvans"
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -259,7 +258,6 @@ run "main_from_renovate_preset_is_configured_as_default" {
   variables {
     github_owner              = "tofu-test-fixture"
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -309,7 +307,6 @@ run "required_workflow_gates_follow_the_owner_config" {
     github_owner              = "tofu-test-fixture"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -372,7 +369,6 @@ run "derives_ci_gate_property_from_default_branch_workflow_call" {
     github_owner              = "example-org"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -422,7 +418,6 @@ run "skips_ci_gate_branch_read_on_empty_repo" {
     github_owner              = "example-org"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -464,7 +459,6 @@ run "derives_ci_gate_from_sha_pinned_org_home_caller" {
     github_owner              = "example-org"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -514,7 +508,6 @@ run "ignores_ci_gate_caller_under_other_job_id" {
     github_owner              = "example-org"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -564,7 +557,6 @@ run "private_merge_gate_repos_share_one_gate" {
     github_owner              = "tofu-test-fixture"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -591,7 +583,6 @@ run "placeholder_org_disables_org_specific_extras" {
     github_owner              = "example-org"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
     hermes_webhook_url        = "https://example.invalid/hook"
     hermes_webhook_secret     = "test-secret"
   }
@@ -659,7 +650,6 @@ run "required_workflow_rulesets_use_default_enforcement" {
     github_owner              = "example-org"
     dryvist_org_extras        = true
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -711,7 +701,6 @@ run "event_forwarder_is_independently_opted_in" {
     dryvist_org_extras        = false
     event_forwarder_enabled   = true
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -751,7 +740,6 @@ run "merge_gate_strict_exempts_only_listed_apps" {
     github_owner              = "tofu-test-fixture"
     dryvist_org_extras        = true
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -820,7 +808,6 @@ run "event_queue_webhook_created_when_enabled_with_intake_records" {
     dryvist_org_extras          = true
     automation_bypass_app_ids   = [1]
     event_queue_webhook_enabled = true
-    codeql_import_enabled       = false
   }
 
   override_data {
@@ -880,7 +867,6 @@ run "merge_hold_ruleset_follows_the_owner_config" {
   variables {
     github_owner              = "JacobPEvans-ai"
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -920,7 +906,6 @@ run "fork_approval_defaults_to_all_external_contributors" {
   variables {
     github_owner              = "tofu-test-fixture"
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -958,7 +943,6 @@ run "merge_tier_property_declared_and_set_per_repository" {
   variables {
     github_owner              = "tofu-test-fixture"
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
   }
 
   override_data {
@@ -1037,7 +1021,6 @@ run "unmanaged_repository_labels_are_not_read" {
   variables {
     github_owner              = "JacobPEvans"
     automation_bypass_app_ids = [1]
-    codeql_import_enabled     = false
     unmanaged_repositories    = ["client"]
   }
 

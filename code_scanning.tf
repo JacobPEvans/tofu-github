@@ -15,8 +15,18 @@ data "github_repositories" "public_for_codeql" {
   query = "org:${local.org} archived:false fork:false is:public"
 }
 
+# Adopting the live CodeQL default-setup blocks is the operator's call, so the
+# switch is read from the CODEQL_IMPORT_ENABLED environment variable; the import
+# blocks run during apply only, so the plan never fails on a missing value.
+data "external" "codeql_import" {
+  program = [
+    "python3", "-c", "import os, json; " +
+      "print(json.dumps({'codeql_import_enabled': os.environ.get('CODEQL_IMPORT_ENABLED', 'true').lower() in ('1', 'true', 'yes')}))"
+  ]
+}
+
 import {
-  for_each = var.codeql_import_enabled ? toset(data.github_repositories.public_for_codeql.names) : toset([])
+  for_each = data.external.codeql_import.output.codeql_import_enabled ? toset(data.github_repositories.public_for_codeql.names) : toset([])
   to       = restapi_object.codeql[each.value]
   id       = "/repos/${local.org}/${each.value}/code-scanning/default-setup"
 }
