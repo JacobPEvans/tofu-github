@@ -38,9 +38,10 @@ moved {
   to   = github_issue_label.org
 }
 
-# The labels each repo already carries, read at plan time.
+# The labels each repo already carries, read at plan time. A repository named
+# in var.unmanaged_repositories is not read.
 data "github_issue_labels" "existing" {
-  for_each = toset(data.github_repositories.org.names)
+  for_each = setsubtract(data.github_repositories.org.names, var.unmanaged_repositories)
 
   repository = each.key
 }
@@ -56,11 +57,12 @@ locals {
 # github_issue_label create does not adopt an existing label (GitHub answers
 # 422 already_exists), so every desired label that already exists is imported
 # instead. Import id format: "<repository>:<name>". An import whose target is
-# already in state is a no-op; missing labels fall through to create.
+# already in state is a no-op; missing labels fall through to create. A
+# repository that is not read gets no import.
 import {
   for_each = {
     for k, v in local.repo_labels : k => v
-    if contains(local.existing_label_names[v.repository], lower(v.name))
+    if contains(lookup(local.existing_label_names, v.repository, []), lower(v.name))
   }
 
   to = github_issue_label.org[each.key]

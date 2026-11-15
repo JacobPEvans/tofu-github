@@ -179,6 +179,14 @@ variable "org_code_scanning_enforcement" {
   }
 }
 
+variable "unmanaged_repositories" {
+  description = <<-EOT
+    Repository names whose existing labels are not read at plan time. Their label resources stay in the configuration and get no import.
+  EOT
+  type        = set(string)
+  default     = []
+}
+
 variable "codeql_import_enabled" {
   description = <<-EOT
     Controls whether import blocks adopt existing CodeQL default setup and the Default runner group.
