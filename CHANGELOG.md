@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.57.0](https://github.com/dryvist/tofu-github/compare/v1.56.0...v1.57.0) (2026-11-16)
+
+
+### Features
+
+* **agent:** autonomous zcode run j-6ca4c7fdfabff74f ([#491](https://github.com/dryvist/tofu-github/issues/491)) ([d917609](https://github.com/dryvist/tofu-github/commit/d917609c912f73e7c043e810556c86e5080a7170))
+* **agent:** zcode run j-6ca4c7fdfabff74f ([d917609](https://github.com/dryvist/tofu-github/commit/d917609c912f73e7c043e810556c86e5080a7170))
+* **repos:** govern an .agents repository in every org ([#493](https://github.com/dryvist/tofu-github/issues/493)) ([5eaf542](https://github.com/dryvist/tofu-github/commit/5eaf54210967e0b5c90564bcf1ed4903327aee0c))
+
+
+### Bug Fixes
+
+* **gitflow:** order gitflow-conditioned rulesets after the gitflow custom property ([#492](https://github.com/dryvist/tofu-github/issues/492)) ([4014f24](https://github.com/dryvist/tofu-github/commit/4014f24ff94fd766ae7396f81a7878b662ccbfb1))
+* **labels:** skip the existing-label read for unmanaged repositories ([#489](https://github.com/dryvist/tofu-github/issues/489)) ([42b3812](https://github.com/dryvist/tofu-github/commit/42b381200fa23f1d62a9edd18d2dd49cc56afa82))
+* **properties:** remove the repo_settings dependency from per-repository resources ([#488](https://github.com/dryvist/tofu-github/issues/488)) ([26191c4](https://github.com/dryvist/tofu-github/commit/26191c4e27830c26cbf75f87d4ee9683c8fbcc22))
+
 ## [1.56.0](https://github.com/dryvist/tofu-github/compare/v1.55.0...v1.56.0) (2026-11-15)
 
 
