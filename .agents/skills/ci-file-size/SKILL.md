@@ -11,8 +11,9 @@ triggers:
 
 ## What it checks
 
-Byte size of every `.md`, `.nix` and `.tf` file, against org defaults from
-`JacobPEvans/.github` (`configs/file-size-defaults.yml`): warn at 6 KB, fail
+Byte size of every `.md`, `.nix` and `.tf` file, against org defaults from the
+shared workflow repository named in the `uses:` line of `.github/workflows/ci-gate.yml`
+(`configs/file-size-defaults.yml`): warn at 6 KB, fail
 above 12 KB; `CHANGELOG.md` is exempt. Check name on the PR:
 `shared-gate / File Size / Check` — the `Check` job in `_file-size.yml`,
 called by `.github/workflows/ci-gate.yml` (`shared-gate` job); runs when the
@@ -21,8 +22,10 @@ PR touches markdown, nix or terraform paths.
 ## Reproduce locally
 
 ```bash
-curl -fsSLo /tmp/check-file-sizes.sh https://raw.githubusercontent.com/JacobPEvans/.github/v1/scripts/check-file-sizes.sh
-curl -fsSLo /tmp/file-size-defaults.yml https://raw.githubusercontent.com/JacobPEvans/.github/v1/configs/file-size-defaults.yml
+# owner/repo/ref of the shared workflows, read from this repo's own caller
+SRC=$(sed -nE 's#.*uses: ([^/]+/[^/]+)/\.github/workflows/_ci-gate\.yml@([^ ]+).*#\1/\2#p' .github/workflows/ci-gate.yml)
+curl -fsSLo /tmp/check-file-sizes.sh "https://raw.githubusercontent.com/$SRC/scripts/check-file-sizes.sh"
+curl -fsSLo /tmp/file-size-defaults.yml "https://raw.githubusercontent.com/$SRC/configs/file-size-defaults.yml"
 FILE_SIZE_DEFAULTS_CONFIG=/tmp/file-size-defaults.yml bash /tmp/check-file-sizes.sh
 ```
 
@@ -37,10 +40,11 @@ a sibling file or module (a config-level split, no state impact). Then run every
 
 ## Worked example
 
-`variables.tf` (13 KB) and `README.md` (12 KB) were over the 12 KB limit.
+`variables.tf` and `README.md` are over the 12 KB limit.
 
-- Wrong (seen 11-14 and 11-15): deleting variable blocks and README text. One deleted variable was still referenced,
-  so `tofu validate` failed with "Reference to undeclared input variable"; the edited file also failed `tofu fmt -check`.
+- Wrong: deleting variable blocks and README text. One deleted variable was still referenced,
+  so `tofu validate` fails with "Reference to undeclared input variable"; an edited file that skipped the formatter fails
+  `tofu fmt -check`.
 - Right: move whole `variable` blocks, unchanged, into a new sibling file grouped by topic, for example
   `variables-rulesets.tf`, and move whole README sections into `docs/<topic>.md` with a one-line link left in
   their place. Run `tofu fmt -recursive`, then `tofu validate` and `tflint`. Every reference still resolves and no
@@ -58,6 +62,5 @@ a sibling file or module (a config-level split, no state impact). Then run every
 
 ## Known causes
 
-- 2026-11-14 and 2026-11-15 (runs 43619542438, 43636886332, 43701500737): variables and text were deleted
-  instead of moved; `tofu validate` or `tofu fmt -check` failed after the fix.
-- 2026-11-15, iac-platform run 43743314160: a correct split left a `data` source unused; `tflint` failed after.
+- Variables or text deleted instead of moved: `tofu validate` or `tofu fmt -check` fails after the fix.
+- A correct split that leaves a `data` source unused: `tflint` fails after the fix.
