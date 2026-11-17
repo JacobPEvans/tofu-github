@@ -1,4 +1,6 @@
 # Per-repo overrides for jpe-nix repositories managed by tofu-github.
+# Rebase merging is off on every repository in the org.
+allow_rebase_merge: false
 repos:
   .github:
     visibility: public
@@ -19,3 +21,21 @@ repos:
       - nix-darwin
       - nix-flakes
       - nixos
+
+  nix-ai:
+    visibility: public
+    gitflow: true
+    allow_update_branch: true
+    description: "Your AI coding toolkit, declared in Nix — Claude, Gemini, Copilot, 15+ MCP servers, one flake"
+    topics:
+      - ai
+      - ai-tools
+      - claude
+      - claude-code
+      - copilot
+      - gemini
+      - home-manager
+      - mcp-server
+      - nix
+      - nix-flakes
+      - ollama

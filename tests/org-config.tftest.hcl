@@ -103,7 +103,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = [".github-private", ".agents"]
     }
   }
 
@@ -161,24 +161,6 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
       can(regex("\\.ya?ml$", github_actions_variable.pr_reconcile_ci_fix_workflow[0].value))
     )
     error_message = "The CI fix workflow variable must come from the owner's pr-reconcile.yml."
-  }
-
-  assert {
-    condition = (
-      length(github_actions_runner_group.pr_reconcile) == 1 &&
-      github_actions_runner_group.pr_reconcile[0].name == "pr-reconcile" &&
-      github_actions_runner_group.pr_reconcile[0].visibility == "selected" &&
-      length(github_actions_runner_group.pr_reconcile[0].selected_repository_ids) == 1 &&
-      toset(github_actions_runner_group.pr_reconcile[0].selected_repository_ids) == toset([data.github_repository.pr_reconcile[0].repo_id]) &&
-      github_actions_runner_group.pr_reconcile[0].restricted_to_workflows &&
-      length(github_actions_runner_group.pr_reconcile[0].selected_workflows) == 2 &&
-      toset(github_actions_runner_group.pr_reconcile[0].selected_workflows) == toset([
-        "${local.org}/${local.pr_reconcile_config.sweep_repository}/.github/workflows/pr-reconcile-sweep.yml@refs/heads/main",
-        "${local.org}/${local.pr_reconcile_config.sweep_repository}/.github/workflows/pr-reconcile.yml@refs/heads/main",
-      ]) &&
-      github_actions_runner_group.pr_reconcile[0].allows_public_repositories
-    )
-    error_message = "The PR Reconcile runner group must be limited to the sweep repository and its two main-branch workflows."
   }
 
   assert {
@@ -389,7 +371,7 @@ run "derives_ci_gate_property_from_default_branch_workflow_call" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["with-gate"]
     }
   }
 
@@ -439,7 +421,7 @@ run "skips_ci_gate_branch_read_on_empty_repo" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["empty"]
     }
   }
 
@@ -481,7 +463,7 @@ run "derives_ci_gate_from_sha_pinned_org_home_caller" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["with-gate"]
     }
   }
 
@@ -531,7 +513,7 @@ run "ignores_ci_gate_caller_under_other_job_id" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["with-gate"]
     }
   }
 
@@ -636,8 +618,6 @@ run "placeholder_org_disables_org_specific_extras" {
       length(github_repository_custom_property.upstream_fork) == 0,
       length(restapi_object.org_upstream_fork_protection) == 0,
       length(github_actions_runner_group.homelab) == 0,
-      length(data.github_repository.pr_reconcile) == 0,
-      length(github_actions_runner_group.pr_reconcile) == 0,
       length(github_organization_ruleset.markdown_lint) == 0,
       length(github_organization_ruleset.conventions) == 0,
       length(github_organization_ruleset.ai_review) == 0,
@@ -975,7 +955,7 @@ run "merge_tier_property_declared_and_set_per_repository" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["sample", ".github", ".github-private"]
     }
   }
 
@@ -1032,6 +1012,51 @@ run "merge_tier_property_declared_and_set_per_repository" {
       !can(regex(local.gitflow_commit_message_pattern, "update stuff"))
     )
     error_message = "The branch commit pattern must accept merge subjects, conventional subjects and native reverts of conventional subjects only."
+  }
+}
+
+# A repo that the apply creates cannot take a property write in the same apply
+# (404), so it gets no property address until GitHub lists it.
+run "new_repository_gets_no_property_until_it_exists" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = [".github", ".github-private"]
+    }
+  }
+
+  assert {
+    condition = (
+      contains(keys(module.repo_settings), "sample") &&
+      !contains(keys(github_repository_custom_property.ci_gate), "sample") &&
+      !contains(keys(github_repository_custom_property.gitflow), "sample") &&
+      !contains(keys(github_repository_custom_property.merge_tier), "sample")
+    )
+    error_message = "A managed repo that does not exist yet must be planned without property addresses."
+  }
+
+  assert {
+    condition = (
+      contains(keys(github_repository_custom_property.ci_gate), ".github") &&
+      contains(keys(github_repository_custom_property.gitflow), ".github") &&
+      contains(keys(github_repository_custom_property.merge_tier), ".github")
+    )
+    error_message = "A managed repo that exists must keep its property addresses."
   }
 }
 

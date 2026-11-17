@@ -87,6 +87,8 @@ module "repo_settings" {
   archived = try(each.value.archived, false)
   # Optional, like archived.
   allow_update_branch = try(each.value.allow_update_branch, false)
+  # Org-wide, from the top-level `allow_rebase_merge` key of the org's repos.yml.
+  allow_rebase_merge = try(local.repos_config.allow_rebase_merge, true)
   # Optional — absent fork_of passes null so existing repos retain today's
   # github_repository arguments.
   fork_of = try(each.value.fork_of, null)
@@ -109,7 +111,7 @@ moved {
 # These blocks are idempotent: an import whose target is already in state is a
 # no-op, so they stay and adopt each repo the org gains between applies.
 import {
-  for_each = local.adopted_repos
+  for_each = { for name, cfg in local.adopted_repos : name => cfg if var.codeql_import_enabled }
   to       = module.repo_settings[each.key].github_repository.this
   id       = each.key
 }
@@ -119,13 +121,13 @@ import {
 # archived repos are filtered out — importing to a count=0 instance would be an
 # invalid target.
 import {
-  for_each = { for name, cfg in local.adopted_repos : name => cfg if !try(cfg.archived, false) }
+  for_each = { for name, cfg in local.adopted_repos : name => cfg if var.codeql_import_enabled && !try(cfg.archived, false) }
   to       = module.repo_settings[each.key].github_repository_vulnerability_alerts.this[0]
   id       = each.key
 }
 
 import {
-  for_each = { for name, cfg in local.adopted_repos : name => cfg if !try(cfg.archived, false) }
+  for_each = { for name, cfg in local.adopted_repos : name => cfg if var.codeql_import_enabled && !try(cfg.archived, false) }
   to       = module.repo_settings[each.key].github_repository_dependabot_security_updates.this[0]
   id       = each.key
 }

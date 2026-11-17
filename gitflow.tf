@@ -23,15 +23,21 @@ resource "github_organization_custom_properties" "gitflow" {
 # repos, "false" on the rest. Setting "false" explicitly clears a value left
 # over from repo creation, which would otherwise keep a trunk repo under the
 # property-targeted git-flow rulesets. Archived repos are read-only and skipped.
+# Only repos that already exist get a value; a repo this apply creates gets its
+# value on the next apply. prevent_destroy makes a search miss fail the plan.
 resource "github_repository_custom_property" "gitflow" {
   for_each = toset([
-    for name, cfg in local.managed_repos : name if !try(cfg.archived, false)
+    for name, cfg in local.adopted_repos : name if !try(cfg.archived, false)
   ])
 
   repository     = each.value
   property_name  = github_organization_custom_properties.gitflow.property_name
   property_type  = "true_false"
   property_value = [tostring(contains(local.gitflow_repos, each.value))]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 moved {

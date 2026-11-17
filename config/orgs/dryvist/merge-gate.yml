@@ -31,7 +31,6 @@ merge_gate:
         - .github
         - ai-workflows
         - claude-code-best-practice
-        - claude-code-plugins
         - claude-code-routines
         - docs
         - grafana-dashboards
@@ -57,10 +56,8 @@ merge_gate:
         - ansible-proxmox-ai
         - ansible-proxmox-apps
         - ansible-splunk
-        - nix-ai
         - nix-darwin
         - nix-home
-        - tofu-github
         - tofu-proxmox
         - tofu-runs-on
     docs-secret-scan:

@@ -63,14 +63,20 @@ data "github_repository_file" "ci_gate" {
   file       = each.value.path
 }
 
-# Set the enterprise-owned property on every unarchived managed repository.
+# Set the enterprise-owned property on every unarchived managed repository that
+# already exists. A repo this apply creates gets its value on the next apply.
+# prevent_destroy makes a search miss fail the plan instead of clearing a value.
 resource "github_repository_custom_property" "ci_gate" {
   for_each = toset([
-    for name, cfg in local.managed_repos : name if !try(cfg.archived, false)
+    for name, cfg in local.adopted_repos : name if !try(cfg.archived, false)
   ])
 
   repository     = each.value
   property_name  = "ci_gate"
   property_type  = "true_false"
   property_value = [tostring(contains(local.ci_gate_repos, each.value))]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }

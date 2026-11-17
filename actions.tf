@@ -1,3 +1,17 @@
+# Adopt the live org Actions settings, so an org's first plan diffs against
+# them instead of overwriting them. A no-op once they are in state.
+import {
+  for_each = var.codeql_import_enabled ? toset([local.org]) : toset([])
+  to       = github_actions_organization_permissions.org
+  id       = each.value
+}
+
+import {
+  for_each = var.codeql_import_enabled ? toset([local.org]) : toset([])
+  to       = github_actions_organization_workflow_permissions.org
+  id       = each.value
+}
+
 resource "github_actions_organization_permissions" "org" {
   enabled_repositories = local.actions_defaults.enabled_repositories
   allowed_actions      = local.actions_defaults.allowed_actions
