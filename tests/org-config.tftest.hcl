@@ -1015,6 +1015,51 @@ run "merge_tier_property_declared_and_set_per_repository" {
   }
 }
 
+# A repo that the apply creates cannot take a property write in the same apply
+# (404), so it gets no property address until GitHub lists it.
+run "new_repository_gets_no_property_until_it_exists" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  override_data {
+    target = data.github_repositories.org
+    values = {
+      names = []
+    }
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = [".github", ".github-private"]
+    }
+  }
+
+  assert {
+    condition = (
+      contains(keys(module.repo_settings), "sample") &&
+      !contains(keys(github_repository_custom_property.ci_gate), "sample") &&
+      !contains(keys(github_repository_custom_property.gitflow), "sample") &&
+      !contains(keys(github_repository_custom_property.merge_tier), "sample")
+    )
+    error_message = "A managed repo that does not exist yet must be planned without property addresses."
+  }
+
+  assert {
+    condition = (
+      contains(keys(github_repository_custom_property.ci_gate), ".github") &&
+      contains(keys(github_repository_custom_property.gitflow), ".github") &&
+      contains(keys(github_repository_custom_property.merge_tier), ".github")
+    )
+    error_message = "A managed repo that exists must keep its property addresses."
+  }
+}
+
 run "unmanaged_repository_labels_are_not_read" {
   command = plan
 
