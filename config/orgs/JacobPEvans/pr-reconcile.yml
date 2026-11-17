@@ -1,6 +1,6 @@
 # The PR Reconcile sweep runs in sweep_repository and reconciles every open
 # pull request of each listed owner. sweep_repository, claude_bot_app_id, and
-# owners are required. dryvist joins once the sweep honours a repository exclusion list.
+# owners are required. Repositories listed in the PR_RECONCILE_EXCLUDE_REPOS secret are skipped.
 sweep_repository: .github-ai
 claude_bot_app_id: "2956476"
 # Optional: the caller workflow the sweep starts for a pull request that fails
@@ -8,6 +8,7 @@ claude_bot_app_id: "2956476"
 ci_fix_workflow: openhands-ci-fix.yml
 owners:
   - JacobPEvans
+  - dryvist
   - JacobPEvans-ai
   - jpe-nix
   - jpe-private
