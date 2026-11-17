@@ -237,7 +237,8 @@ tofu init -backend=false && tofu validate
 **Enforcement defaults vary by ruleset.** See [Applying](docs/agents/applying.md).
 
 A repository created or renamed in an apply gets its custom properties,
-merge queue ruleset and `revert-delay` environment on the next apply.
+merge queue ruleset and `revert-delay` environment on the next apply. Archiving
+or removing one needs a `removed` block for its `ci_gate`, `gitflow` and `merge_tier` addresses.
 
 ---
 

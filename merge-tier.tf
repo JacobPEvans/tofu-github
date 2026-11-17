@@ -18,14 +18,20 @@ resource "github_organization_custom_properties" "merge_tier" {
 # value with `merge_tier:`; every other repo inherits the "legacy" default.
 # merge_queue.force_standard in config/rulesets-defaults.yml turns hot into
 # standard for every repo (local.merge_tier_effective in merge-queue.tf).
-# Archived repos are read-only and skipped.
+# Archived repos are read-only and skipped. Only repos that already exist get a
+# value; a repo this apply creates gets its value on the next apply.
+# prevent_destroy makes a search miss fail the plan instead of clearing a value.
 resource "github_repository_custom_property" "merge_tier" {
   for_each = {
-    for name, cfg in local.managed_repos : name => cfg if !try(cfg.archived, false)
+    for name, cfg in local.adopted_repos : name => cfg if !try(cfg.archived, false)
   }
 
   repository     = each.key
   property_name  = github_organization_custom_properties.merge_tier.property_name
   property_type  = "single_select"
   property_value = [local.merge_tier_effective[each.key]]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }

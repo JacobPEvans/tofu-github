@@ -109,7 +109,7 @@ moved {
 # These blocks are idempotent: an import whose target is already in state is a
 # no-op, so they stay and adopt each repo the org gains between applies.
 import {
-  for_each = local.adopted_repos
+  for_each = { for name, cfg in local.adopted_repos : name => cfg if var.codeql_import_enabled }
   to       = module.repo_settings[each.key].github_repository.this
   id       = each.key
 }
@@ -119,13 +119,13 @@ import {
 # archived repos are filtered out — importing to a count=0 instance would be an
 # invalid target.
 import {
-  for_each = { for name, cfg in local.adopted_repos : name => cfg if !try(cfg.archived, false) }
+  for_each = { for name, cfg in local.adopted_repos : name => cfg if var.codeql_import_enabled && !try(cfg.archived, false) }
   to       = module.repo_settings[each.key].github_repository_vulnerability_alerts.this[0]
   id       = each.key
 }
 
 import {
-  for_each = { for name, cfg in local.adopted_repos : name => cfg if !try(cfg.archived, false) }
+  for_each = { for name, cfg in local.adopted_repos : name => cfg if var.codeql_import_enabled && !try(cfg.archived, false) }
   to       = module.repo_settings[each.key].github_repository_dependabot_security_updates.this[0]
   id       = each.key
 }
