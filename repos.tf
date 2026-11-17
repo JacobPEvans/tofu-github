@@ -87,6 +87,8 @@ module "repo_settings" {
   archived = try(each.value.archived, false)
   # Optional, like archived.
   allow_update_branch = try(each.value.allow_update_branch, false)
+  # Org-wide, from the top-level `allow_rebase_merge` key of the org's repos.yml.
+  allow_rebase_merge = try(local.repos_config.allow_rebase_merge, true)
   # Optional — absent fork_of passes null so existing repos retain today's
   # github_repository arguments.
   fork_of = try(each.value.fork_of, null)
