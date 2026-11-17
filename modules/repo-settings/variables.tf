@@ -58,6 +58,12 @@ variable "archived" {
   default     = false
 }
 
+variable "allow_rebase_merge" {
+  description = "Allow rebase merging. An App's rebase merge writes unsigned commits, which required_signatures refuses."
+  type        = bool
+  default     = true
+}
+
 variable "allow_update_branch" {
   description = "Show the \"Update branch\" button on pull requests whose head is behind the base. Defaults to false."
   type        = bool

@@ -1,4 +1,6 @@
 # Per-repo overrides for jpe-nix repositories managed by tofu-github.
+# Rebase merging is off on every repository in the org.
+allow_rebase_merge: false
 repos:
   .github:
     visibility: public
