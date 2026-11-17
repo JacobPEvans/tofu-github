@@ -187,7 +187,7 @@ variable "unmanaged_repositories" {
 
 variable "codeql_import_enabled" {
   description = <<-EOT
-    Controls whether import blocks adopt existing CodeQL default setup and the Default runner group.
+    Controls whether import blocks adopt existing CodeQL default setup, the Default runner group and existing repositories.
   EOT
   type        = bool
   default     = true
