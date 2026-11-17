@@ -234,7 +234,7 @@ run "adds_revert_delay_environment_to_every_gate_repository" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["with-gate", "also-gated"]
     }
   }
 
@@ -363,7 +363,7 @@ run "targeted_plan_of_per_repository_extras_names_no_repo_settings_address" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["sample"]
     }
   }
 

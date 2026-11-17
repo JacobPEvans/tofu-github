@@ -103,7 +103,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = [".github-private", ".agents"]
     }
   }
 
@@ -371,7 +371,7 @@ run "derives_ci_gate_property_from_default_branch_workflow_call" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["with-gate"]
     }
   }
 
@@ -421,7 +421,7 @@ run "skips_ci_gate_branch_read_on_empty_repo" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["empty"]
     }
   }
 
@@ -463,7 +463,7 @@ run "derives_ci_gate_from_sha_pinned_org_home_caller" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["with-gate"]
     }
   }
 
@@ -513,7 +513,7 @@ run "ignores_ci_gate_caller_under_other_job_id" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["with-gate"]
     }
   }
 
@@ -955,7 +955,7 @@ run "merge_tier_property_declared_and_set_per_repository" {
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = []
+      names = ["sample", ".github", ".github-private"]
     }
   }
 
