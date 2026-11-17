@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.57.1](https://github.com/JacobPEvans/tofu-github/compare/v1.57.0...v1.57.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* **actions:** import the live org Actions settings before managing them ([#505](https://github.com/JacobPEvans/tofu-github/issues/505)) ([6e9850f](https://github.com/JacobPEvans/tofu-github/commit/6e9850f18346470827be9f42ad4e91606b61671a))
+* **config:** move entries for repositories transferred out of dryvist ([78f9261](https://github.com/JacobPEvans/tofu-github/commit/78f92612678783b3ab6ca8475d7928c48c7af64a))
+* **config:** update entries for nix-ai, claude-code-plugins and tofu-github ([#502](https://github.com/JacobPEvans/tofu-github/issues/502)) ([78f9261](https://github.com/JacobPEvans/tofu-github/commit/78f92612678783b3ab6ca8475d7928c48c7af64a))
+* **jpe-nix:** turn rebase merging off on every jpe-nix repository ([#504](https://github.com/JacobPEvans/tofu-github/issues/504)) ([7ddf577](https://github.com/JacobPEvans/tofu-github/commit/7ddf5779de638c133c5e40349e65056838fbcc28))
+* **pr-reconcile:** remove the pr-reconcile runner group ([#499](https://github.com/JacobPEvans/tofu-github/issues/499)) ([8a9b363](https://github.com/JacobPEvans/tofu-github/commit/8a9b36309276f081206e7465a1011046691b315f))
+* **properties:** set ci_gate, gitflow and merge_tier only on existing repositories ([#503](https://github.com/JacobPEvans/tofu-github/issues/503)) ([7cb3046](https://github.com/JacobPEvans/tofu-github/commit/7cb3046834dadc02f2d989fa009a4c1d7e624248))
+
 ## [1.57.0](https://github.com/dryvist/tofu-github/compare/v1.56.0...v1.57.0) (2026-11-16)
 
 
