@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.58.0](https://github.com/JacobPEvans/tofu-github/compare/v1.57.1...v1.58.0) (2026-11-17)
+
+
+### Features
+
+* **pr-reconcile:** add dryvist to the PR Reconcile sweep owners ([#506](https://github.com/JacobPEvans/tofu-github/issues/506)) ([bab0459](https://github.com/JacobPEvans/tofu-github/commit/bab0459b0572d696e80639ff0c5e5b6066f171ba))
+
 ## [1.57.1](https://github.com/JacobPEvans/tofu-github/compare/v1.57.0...v1.57.1) (2026-11-17)
 
 
