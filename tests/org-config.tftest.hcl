@@ -164,6 +164,16 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   }
 
   assert {
+    condition = (
+      length(github_actions_variable.pr_reconcile_merge) == 1 &&
+      github_actions_variable.pr_reconcile_merge[0].repository == local.pr_reconcile_config.sweep_repository &&
+      github_actions_variable.pr_reconcile_merge[0].variable_name == "PR_RECONCILE_MERGE" &&
+      github_actions_variable.pr_reconcile_merge[0].value == "true"
+    )
+    error_message = "The sweep merge variable must come from the owner's pr-reconcile.yml."
+  }
+
+  assert {
     condition     = length(local.repos) == 0 && length(local.ruleset_imports) == 0
     error_message = "An owner with no YAML overrides must use empty repo data and skip org-specific imports."
   }
