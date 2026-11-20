@@ -13,3 +13,10 @@ repos:
       - ansible
       - ansible-collection
       - youtrack
+  tofu-semaphore:
+    visibility: public
+    description: "OpenTofu for the Semaphore UI object graph: projects, repositories, inventories, environments, templates, schedules and views."
+    topics:
+      - ansible
+      - opentofu
+      - semaphore
