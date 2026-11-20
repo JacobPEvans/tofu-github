@@ -137,7 +137,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
       length(github_actions_variable.pr_reconcile_owners) == 1 &&
       github_actions_variable.pr_reconcile_owners[0].repository == ".github-ai" &&
       github_actions_variable.pr_reconcile_owners[0].variable_name == "PR_RECONCILE_OWNERS" &&
-      github_actions_variable.pr_reconcile_owners[0].value == "JacobPEvans,JacobPEvans-ai,jpe-nix,jpe-private,jpe-ansible,jpe-cribl,jpe-splunk,jpe-openbao-plugin-secrets"
+      github_actions_variable.pr_reconcile_owners[0].value == "JacobPEvans,dryvist,JacobPEvans-ai,jpe-nix,jpe-private,jpe-ansible,jpe-cribl,jpe-splunk,jpe-openbao-plugin-secrets"
     )
     error_message = "The PR Reconcile owners variable must come from the owner's pr-reconcile.yml."
   }
@@ -161,6 +161,26 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
       can(regex("\\.ya?ml$", github_actions_variable.pr_reconcile_ci_fix_workflow[0].value))
     )
     error_message = "The CI fix workflow variable must come from the owner's pr-reconcile.yml."
+  }
+
+  assert {
+    condition = (
+      github_actions_variable.ci_fix["tofu-github/CI_FIX_CI_STRUCTURE"].repository == "tofu-github" &&
+      github_actions_variable.ci_fix["tofu-github/CI_FIX_CI_STRUCTURE"].value == local.ci_fix_config.repositories["tofu-github"].ci_structure &&
+      contains(keys(github_actions_variable.ci_fix), "tofu-github/CI_FIX_REPO_CONTEXT") &&
+      !contains(keys(github_actions_variable.ci_fix), "tofu-github/CI_FIX_EXTRA_TOOLS")
+    )
+    error_message = "CI fix variables must come from the owner's ci-fix.yml, one per non-empty key."
+  }
+
+  assert {
+    condition = (
+      length(github_actions_variable.pr_reconcile_merge) == 1 &&
+      github_actions_variable.pr_reconcile_merge[0].repository == local.pr_reconcile_config.sweep_repository &&
+      github_actions_variable.pr_reconcile_merge[0].variable_name == "PR_RECONCILE_MERGE" &&
+      github_actions_variable.pr_reconcile_merge[0].value == "true"
+    )
+    error_message = "The sweep merge variable must come from the owner's pr-reconcile.yml."
   }
 
   assert {

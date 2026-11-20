@@ -1,0 +1,12 @@
+---
+# Per-repository text for the canonical CI-fix caller, set as repository variables by ci-fix-variables.tf.
+# List public repositories only; a private repository sets the same keys under `ci_fix` in its private override.
+#
+# Schema (per repository, every key optional):
+#   repo_context: what the repository is and how it builds -> CI_FIX_REPO_CONTEXT (default: the description)
+#   ci_structure: which checks CI runs and how to run them locally -> CI_FIX_CI_STRUCTURE
+#   extra_tools:  extra allowed agent tools, e.g. Bash(tofu:*) -> CI_FIX_EXTRA_TOOLS
+repositories:
+  tofu-github:
+    repo_context: OpenTofu configuration for GitHub organizations and repositories
+    ci_structure: CI Gate aggregates the repository's lint, test and contract checks.

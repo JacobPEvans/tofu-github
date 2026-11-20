@@ -48,3 +48,20 @@ resource "github_actions_variable" "pr_reconcile_ci_fix_workflow" {
     }
   }
 }
+
+# Optional: merge: true sets PR_RECONCILE_MERGE, so the sweep merges a bot pull
+# request that is green at its exact head. Unset or false, the sweep never merges.
+resource "github_actions_variable" "pr_reconcile_merge" {
+  count = try(local.pr_reconcile_config.merge, false) == true ? 1 : 0
+
+  repository    = try(local.pr_reconcile_config.sweep_repository, "")
+  variable_name = "PR_RECONCILE_MERGE"
+  value         = "true"
+
+  lifecycle {
+    precondition {
+      condition     = try(local.pr_reconcile_config.sweep_repository, "") != ""
+      error_message = "config/orgs/<owner>/pr-reconcile.yml merge needs sweep_repository."
+    }
+  }
+}

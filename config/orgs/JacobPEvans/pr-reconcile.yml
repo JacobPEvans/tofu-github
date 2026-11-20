@@ -6,6 +6,9 @@ claude_bot_app_id: "2956476"
 # Optional: the caller workflow the sweep starts for a pull request that fails
 # a code check; a repository without that file is left alone.
 ci_fix_workflow: openhands-ci-fix.yml
+# Optional: true lets the sweep merge a bot pull request that is green at its
+# exact head with a successful AI Merge Gate.
+merge: true
 owners:
   - JacobPEvans
   - dryvist

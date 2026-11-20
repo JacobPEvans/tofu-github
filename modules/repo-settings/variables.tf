@@ -61,7 +61,7 @@ variable "archived" {
 variable "allow_rebase_merge" {
   description = "Allow rebase merging. An App's rebase merge writes unsigned commits, which required_signatures refuses."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "allow_update_branch" {
