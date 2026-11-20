@@ -590,6 +590,34 @@ run "private_merge_gate_repos_share_one_gate" {
   }
 }
 
+run "org_opt_in_reads_its_own_private_repo_overrides" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture-private"
+    dryvist_org_extras        = false
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition     = data.vault_kv_secret_v2.private_repo_overrides[0].name == "infrastructure/tofu-github/private-overrides-tofu-test-fixture-private"
+    error_message = "An opted-in org must read its own private overrides document."
+  }
+
+  assert {
+    condition     = length(setintersection(toset(keys(local.repos)), toset(["example-a", "example-b"]))) == 2
+    error_message = "Private overrides read through the org opt-in must be merged into the org's repos."
+  }
+}
+
 run "placeholder_org_disables_org_specific_extras" {
   command = plan
 
