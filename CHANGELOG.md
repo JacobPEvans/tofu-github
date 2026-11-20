@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.59.0](https://github.com/JacobPEvans/tofu-github/compare/v1.58.0...v1.59.0) (2026-11-20)
+
+
+### Features
+
+* **ci-fix:** declare the CI_FIX_* repository variables from owner config ([#517](https://github.com/JacobPEvans/tofu-github/issues/517)) ([ed2697f](https://github.com/JacobPEvans/tofu-github/commit/ed2697fa20e8c289f351bd5297cf9f597503c409))
+* **jpe-ansible:** create the tofu-semaphore repository ([#519](https://github.com/JacobPEvans/tofu-github/issues/519)) ([a4d4423](https://github.com/JacobPEvans/tofu-github/commit/a4d4423cfb039edc9ad1cecba3a0de1c5004e065))
+* **pr-reconcile:** set PR_RECONCILE_MERGE from the owner config ([#520](https://github.com/JacobPEvans/tofu-github/issues/520)) ([c47c031](https://github.com/JacobPEvans/tofu-github/commit/c47c031ad787ba4766ad4bdb1c2e69dae4a0fd13))
+
+
+### Bug Fixes
+
+* **repo-settings:** rebase merging off by default on every repository ([#512](https://github.com/JacobPEvans/tofu-github/issues/512)) ([39ba283](https://github.com/JacobPEvans/tofu-github/commit/39ba28314bd6bb6e5433c632cdef25c718c83ca0))
+
 ## [1.58.0](https://github.com/JacobPEvans/tofu-github/compare/v1.57.1...v1.58.0) (2026-11-17)
 
 
