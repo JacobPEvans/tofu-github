@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.60.0](https://github.com/JacobPEvans/tofu-github/compare/v1.59.0...v1.60.0) (2026-11-20)
+
+
+### Features
+
+* **private-overrides:** let an org opt in to its own private overrides document ([#526](https://github.com/JacobPEvans/tofu-github/issues/526)) ([eaca8f1](https://github.com/JacobPEvans/tofu-github/commit/eaca8f17029e5e7a5ab2a850f4e991085b49fea8))
+
 ## [1.59.0](https://github.com/JacobPEvans/tofu-github/compare/v1.58.0...v1.59.0) (2026-11-20)
 
 
