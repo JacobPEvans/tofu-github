@@ -327,3 +327,21 @@ variable "event_forwarder_enforcement" {
     error_message = "Use disabled, evaluate or active."
   }
 }
+
+# Private repository overrides: names and settings kept out of this public source.
+variable "private_repo_overrides_enabled" {
+  description = "Read the private repository overrides even when no merge gate requires them."
+  type        = bool
+  default     = false
+}
+
+variable "private_repo_overrides_kv_name" {
+  description = "KV v2 document, under the secret mount, that holds this org's private repository overrides."
+  type        = string
+  default     = "infrastructure/tofu-github/private-overrides"
+
+  validation {
+    condition     = can(regex("^[A-Za-z0-9_-]+(/[A-Za-z0-9_-]+)*$", var.private_repo_overrides_kv_name))
+    error_message = "private_repo_overrides_kv_name must be a slash-separated KV path of letters, digits, hyphens and underscores."
+  }
+}

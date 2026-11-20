@@ -24,8 +24,13 @@ unset unless a value is supplied. The file is optional when the org has no
 overrides.
 
 Repository names and metadata that must stay outside this public source are
-read from the protected OpenBao KV v2 document at
-`secret/infrastructure/tofu-github/private-overrides`, under `private_repo_overrides`.
+read from a protected OpenBao KV v2 document under the `secret` mount, under
+`private_repo_overrides`. The document is
+`infrastructure/tofu-github/private-overrides` unless the workspace sets
+`private_repo_overrides_kv_name`. It is read when the org's `merge-gate.yml`
+sets `requires_private_repos`, or when the workspace sets
+`private_repo_overrides_enabled`. An entry there for a repo that does not exist
+yet creates it, as a `repos.yml` entry does.
 Optional `merge_gate` entries there carry check contexts for the outer
 repository key.
 

@@ -11,11 +11,12 @@ data "github_repositories" "public" {
   query = "org:${local.org} is:public fork:true archived:false"
 }
 
-# Private repo metadata is read only for orgs whose merge-gate config requires it.
+# Private repo metadata is read only for orgs whose merge-gate config requires
+# it or whose workspace opts in.
 data "vault_kv_secret_v2" "private_repo_overrides" {
-  count = local.merge_gate_requires_private_repos ? 1 : 0
+  count = local.merge_gate_requires_private_repos || var.private_repo_overrides_enabled ? 1 : 0
   mount = "secret"
-  name  = "infrastructure/tofu-github/private-overrides"
+  name  = var.private_repo_overrides_kv_name
 }
 
 # Event queue intake: the Function URL and HMAC secret that the webhook-intake
