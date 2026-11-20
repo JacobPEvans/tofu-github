@@ -590,39 +590,31 @@ run "private_merge_gate_repos_share_one_gate" {
   }
 }
 
-run "workspace_opt_in_reads_private_repo_overrides" {
+run "org_opt_in_reads_its_own_private_repo_overrides" {
   command = plan
 
   variables {
-    github_owner                   = "JacobPEvans"
-    automation_bypass_app_ids      = [1]
-    codeql_import_enabled          = false
-    private_repo_overrides_enabled = true
-    private_repo_overrides_kv_name = "infrastructure/tofu-github/private-overrides/example-org"
+    github_owner              = "tofu-test-fixture-private"
+    dryvist_org_extras        = false
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
   }
 
   override_data {
     target = data.github_repositories.existing
     values = {
-      names = [".github-private", ".agents"]
-    }
-  }
-
-  override_resource {
-    target = github_organization_custom_properties.family
-    values = {
-      default_value = null
+      names = []
     }
   }
 
   assert {
-    condition     = data.vault_kv_secret_v2.private_repo_overrides[0].name == "infrastructure/tofu-github/private-overrides/example-org"
-    error_message = "An opted-in workspace must read its own private overrides document."
+    condition     = data.vault_kv_secret_v2.private_repo_overrides[0].name == "infrastructure/tofu-github/private-overrides-tofu-test-fixture-private"
+    error_message = "An opted-in org must read its own private overrides document."
   }
 
   assert {
     condition     = length(setintersection(toset(keys(local.repos)), toset(["example-a", "example-b"]))) == 2
-    error_message = "Private overrides read through the workspace opt-in must be merged into the org's repos."
+    error_message = "Private overrides read through the org opt-in must be merged into the org's repos."
   }
 }
 
