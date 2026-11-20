@@ -164,6 +164,16 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   }
 
   assert {
+    condition = (
+      github_actions_variable.ci_fix["tofu-github/CI_FIX_CI_STRUCTURE"].repository == "tofu-github" &&
+      github_actions_variable.ci_fix["tofu-github/CI_FIX_CI_STRUCTURE"].value == local.ci_fix_config.repositories["tofu-github"].ci_structure &&
+      contains(keys(github_actions_variable.ci_fix), "tofu-github/CI_FIX_REPO_CONTEXT") &&
+      !contains(keys(github_actions_variable.ci_fix), "tofu-github/CI_FIX_EXTRA_TOOLS")
+    )
+    error_message = "CI fix variables must come from the owner's ci-fix.yml, one per non-empty key."
+  }
+
+  assert {
     condition     = length(local.repos) == 0 && length(local.ruleset_imports) == 0
     error_message = "An owner with no YAML overrides must use empty repo data and skip org-specific imports."
   }

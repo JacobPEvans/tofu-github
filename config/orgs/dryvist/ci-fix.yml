@@ -1,0 +1,51 @@
+---
+# Per-repository text for the canonical CI-fix caller, set as repository variables by ci-fix-variables.tf.
+# List public repositories only; a private repository sets the same keys under `ci_fix` in its private override.
+#
+# Schema (per repository, every key optional):
+#   repo_context: what the repository is and how it builds -> CI_FIX_REPO_CONTEXT (default: the description)
+#   ci_structure: which checks CI runs and how to run them locally -> CI_FIX_CI_STRUCTURE
+#   extra_tools:  extra allowed agent tools, e.g. Bash(tofu:*) -> CI_FIX_EXTRA_TOOLS
+repositories:
+  ai-assistant-instructions:
+    repo_context: AI assistant instruction files and CLAUDE.md patterns for multi-model orchestration (Claude, Gemini,
+      Copilot)
+    ci_structure: ci-gate.yml (alls-green gate aggregating yaml-lint, markdownlint, spellcheck, cclint, token-limits,
+      validate-instructions checks)
+  ansible-proxmox:
+    repo_context: Ansible playbooks and roles for configuring Proxmox VE host
+    ci_structure: CI Gate aggregates lint, syntax, contract, and Molecule checks. PRs into develop use changed-role
+      scenarios; PRs into main and non-PR runs use the full Molecule matrix.
+  ansible-proxmox-ai:
+    repo_context: Ansible playbooks and roles for the AI serving and agent guests
+    ci_structure: CI Gate aggregates the repository's lint, test and contract checks.
+  ansible-proxmox-apps:
+    repo_context: Ansible playbooks and roles for applications on Proxmox VMs/containers
+    ci_structure: ansible-lint.yml (ansible-lint + ansible-playbook --syntax-check)
+    extra_tools: Bash(ansible-lint:*),Bash(ansible-playbook:*)
+  grafana-dashboards:
+    repo_context: Grafana dashboards and alert rules as code
+    ci_structure: CI Gate aggregates the repository's lint, test and contract checks.
+  iac-platform:
+    repo_context: OpenTofu configuration for platform services
+    ci_structure: CI Gate aggregates the repository's lint, test and contract checks.
+  nix-darwin:
+    repo_context: Nix flakes configuration for macOS and Linux systems
+    ci_structure: ci-gate.yml (orchestrator calling _nix-validate, _nix-build, _markdown-lint, _file-size, _claude-settings)
+    extra_tools: Bash(nix:*)
+  nix-devenv:
+    repo_context: Nix development shells and shared pre-commit hooks
+    ci_structure: CI Gate aggregates the repository's lint, test and contract checks.
+  nix-home:
+    repo_context: Nix home-manager modules for cross-platform dev environment (git, zsh, VS Code, tmux)
+    ci_structure: ci-gate.yml (dorny/paths-filter + nix-check + markdown-lint + alls-green gate)
+    extra_tools: Bash(nix:*)
+  tofu-aws-templates:
+    repo_context: OpenTofu AWS module templates (foundation/, modules/iam, modules/storage, examples/complete).
+    ci_structure: 'ci.yml runs per-directory tofu init/validate/test plus a ''Format and Lint'' job: tofu fmt -check
+      -recursive and tflint.'
+  tofu-proxmox:
+    repo_context: Terraform/OpenTofu project managing Proxmox VE infrastructure.
+    ci_structure: 'CI Gate aggregates required checks: File Size (HARD 12KB per-file limit, docs especially), Markdown
+      Lint, Secret Scan, and Terraform (tofu fmt/init/validate/test).'
+    extra_tools: Bash(tofu:*)
