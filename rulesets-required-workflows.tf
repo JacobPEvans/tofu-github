@@ -263,3 +263,35 @@ resource "github_organization_ruleset" "main_source_gate" {
     }
   }
 }
+
+# Evaluates inherited CI on the configured canary repository's default-branch PRs.
+# `config/orgs/<owner>/required-workflows.yml` opts in each org.
+resource "github_organization_ruleset" "inherited_ci_canary" {
+  count       = try(local.required_workflows_config.inherited_ci_canary, false) ? 1 : 0
+  name        = "org-inherited-ci-canary"
+  target      = "branch"
+  enforcement = "evaluate"
+
+  conditions {
+    ref_name {
+      include = ["~DEFAULT_BRANCH"]
+      exclude = []
+    }
+    repository_name {
+      include = [local.required_workflows_config.inherited_ci_canary_repository]
+      exclude = []
+    }
+  }
+
+  rules {
+    required_workflows {
+      do_not_enforce_on_create = true
+
+      required_workflow {
+        repository_id = module.repo_settings[".github"].repo_id
+        path          = ".github/workflows/inherited-ci.yml"
+        ref           = "refs/heads/main"
+      }
+    }
+  }
+}
