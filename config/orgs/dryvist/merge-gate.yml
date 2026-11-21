@@ -55,7 +55,6 @@ merge_gate:
         - ansible-proxmox
         - ansible-proxmox-ai
         - ansible-proxmox-apps
-        - ansible-splunk
         - nix-darwin
         - nix-home
         - tofu-proxmox
