@@ -32,9 +32,10 @@ jobs:
     permissions:
       actions: read
       contents: write
+      id-token: write
       issues: write
       pull-requests: write
-    uses: JacobPEvans/.github-ai/.github/workflows/cc-ci-fix.yml@61f9242463fdd848d59429443842f8d7e7cddadf # v2.38.0
+    uses: JacobPEvans/.github-ai/.github/workflows/cc-ci-fix-oidc.yml@v2
     secrets: inherit
     with:
       runner_label: ${{ (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && 'review' || 'ubuntu-latest' }}
