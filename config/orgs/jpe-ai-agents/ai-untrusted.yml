@@ -1,0 +1,4 @@
+# Repositories reachable by lower-trust AI sandbox agents. Private repositories never qualify.
+# Opted-in repositories must contain no secrets.
+repos:
+  - ai-llm-prompts
