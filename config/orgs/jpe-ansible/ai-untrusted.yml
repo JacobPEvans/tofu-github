@@ -1,0 +1,9 @@
+# Repositories reachable by lower-trust AI sandbox agents. Private repositories never qualify.
+# Opted-in repositories must contain no secrets.
+repos:
+  - ansible-ai-agents
+  - ansible-nautobot
+  - ansible-productivity-apps
+  - ansible-splunk
+  - ansible-youtrack
+  - homelab-contracts
