@@ -1,9 +1,10 @@
 # Restrict updates of selected default branches to the listed pull-request bypass actors.
+# merge-restriction.yml may set `enforcement` (disabled, evaluate or active); the default is active.
 resource "github_organization_ruleset" "org_default_branch_merge_restriction" {
   count       = length(local.merge_restriction_config.repos) == 0 ? 0 : 1
   name        = "org-default-branch-merge-restriction"
   target      = "branch"
-  enforcement = "active"
+  enforcement = try(local.merge_restriction_config.enforcement, "active")
 
   lifecycle {
     precondition {
