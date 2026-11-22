@@ -1,0 +1,10 @@
+# Per-repo overrides for JacobPEvans repositories managed by tofu-github.
+repos:
+  prometheus-sql-exporter-collectors:
+    visibility: public
+    description: "sql_exporter collector definitions for the homelab Prometheus stack"
+    topics:
+      - homelab
+      - observability
+      - prometheus
+      - sql-exporter
