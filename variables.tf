@@ -1,8 +1,6 @@
 # Enforcement inputs accept disabled, evaluate, or active.
 variable "markdown_lint_enforcement" {
-  description = <<-EOT
-    Org markdown-lint enforcement. Evaluate reports in Insights without blocking; activate when the fleet is green.
-  EOT
+  description = "Org markdown-lint enforcement. Evaluate reports in Insights without blocking; activate when the fleet is green."
   type        = string
   default     = "evaluate"
 
@@ -13,9 +11,7 @@ variable "markdown_lint_enforcement" {
 }
 
 variable "conventions_enforcement" {
-  description = <<-EOT
-    Org repo-conventions presence checks: LICENSE, AGENTS.md, Nix dev shell, release-please config. Evaluate reports without blocking; the CONVENTIONS_STRICT repo variable opts a repo into failure.
-  EOT
+  description = "Org repo-conventions presence checks: LICENSE, AGENTS.md, Nix dev shell, release-please config. Evaluate reports without blocking; the CONVENTIONS_STRICT repo variable opts a repo into failure."
   type        = string
   default     = "evaluate"
 
@@ -26,9 +22,7 @@ variable "conventions_enforcement" {
 }
 
 variable "ai_review_enforcement" {
-  description = <<-EOT
-    Org-wide AI review injects .github/ai-review.yml into every repo's PRs and runs PR-Agent on the model router. Evaluate reports without gating; active waits through a router outage, then fails and blocks merges.
-  EOT
+  description = "Org-wide AI review injects .github/ai-review.yml into every repo's PRs and runs PR-Agent on the model router. Evaluate reports without gating; active waits through a router outage, then fails and blocks merges."
   type        = string
   default     = "evaluate"
 
@@ -39,9 +33,7 @@ variable "ai_review_enforcement" {
 }
 
 variable "docs_publisher_enforcement" {
-  description = <<-EOT
-    Documentation publisher requires its configured approval count; release and triage apps bypass PRs.
-  EOT
+  description = "Documentation publisher requires its configured approval count; release and triage apps bypass PRs."
   type        = string
   default     = "active"
 
@@ -52,9 +44,7 @@ variable "docs_publisher_enforcement" {
 }
 
 variable "org_branch_protection_enforcement" {
-  description = <<-EOT
-    Default-branch rules require signatures, branch-name pattern, Conventional Commit messages, and PR thread resolution; no bypass, including for admins.
-  EOT
+  description = "Default-branch rules require signatures, branch-name pattern, Conventional Commit messages, and PR thread resolution; no bypass, including for admins."
   type        = string
   default     = "active"
 
@@ -65,9 +55,7 @@ variable "org_branch_protection_enforcement" {
 }
 
 variable "required_signatures_enforcement" {
-  description = <<-EOT
-    Org-wide required-signatures rule covers every branch.
-  EOT
+  description = "Org-wide required-signatures rule covers every branch."
   type        = string
   default     = "active"
 
@@ -78,9 +66,7 @@ variable "required_signatures_enforcement" {
 }
 
 variable "org_review_gate_enforcement" {
-  description = <<-EOT
-    Default-branch gate requires one approval and CODEOWNER review; OrganizationAdmin and release automation bypass in pull_request mode, all others need review.
-  EOT
+  description = "Default-branch gate requires one approval and CODEOWNER review; OrganizationAdmin and release automation bypass in pull_request mode, all others need review."
   type        = string
   default     = "disabled"
 
@@ -91,9 +77,7 @@ variable "org_review_gate_enforcement" {
 }
 
 variable "org_gitflow_base_enforcement" {
-  description = <<-EOT
-    Git-flow base applies only to local.gitflow_repos: signatures on main and develop.
-  EOT
+  description = "Git-flow base applies only to local.gitflow_repos: signatures on main and develop."
   type        = string
   default     = "active"
 
@@ -104,9 +88,7 @@ variable "org_gitflow_base_enforcement" {
 }
 
 variable "org_gitflow_main_enforcement" {
-  description = <<-EOT
-    Git-flow main applies only to local.gitflow_repos: PRs (no direct pushes), merge commits only, thread resolution, and Conventional-Commits-or-merge messages; signatures are enforced by org-gitflow-base and org-wide rulesets.
-  EOT
+  description = "Git-flow main applies only to local.gitflow_repos: PRs (no direct pushes), merge commits only, thread resolution, and Conventional-Commits-or-merge messages; signatures are enforced by org-gitflow-base and org-wide rulesets."
   type        = string
   default     = "active"
 
@@ -117,9 +99,7 @@ variable "org_gitflow_main_enforcement" {
 }
 
 variable "org_gitflow_develop_enforcement" {
-  description = <<-EOT
-    Git-flow develop applies only to local.gitflow_repos: PRs (no direct pushes), merge methods from config/rulesets-defaults.yml, and the Conventional-Commits-or-merge message pattern; signatures are enforced by org-gitflow-base and org-wide rulesets.
-  EOT
+  description = "Git-flow develop applies only to local.gitflow_repos: PRs (no direct pushes), merge methods from config/rulesets-defaults.yml, and the Conventional-Commits-or-merge message pattern; signatures are enforced by org-gitflow-base and org-wide rulesets."
   type        = string
   default     = "active"
 
@@ -130,9 +110,7 @@ variable "org_gitflow_develop_enforcement" {
 }
 
 variable "org_release_freeze_enforcement" {
-  description = <<-EOT
-    Git-flow repos require the release-freeze status check on develop. Evaluate reports without blocking; activate after every git-flow repo calls the shared status workflow.
-  EOT
+  description = "Git-flow repos require the release-freeze status check on develop. Evaluate reports without blocking; activate after every git-flow repo calls the shared status workflow."
   type        = string
   default     = "evaluate"
 
@@ -143,9 +121,7 @@ variable "org_release_freeze_enforcement" {
 }
 
 variable "org_copilot_review_enforcement" {
-  description = <<-EOT
-    Pilot targets explicit branches and repos in selected copilot-review.yml, not property matches; expand it there. Paid: AI credits per review, no seats or pooled allowance; review_on_push=false caps about one review per PR.
-  EOT
+  description = "Pilot targets explicit branches and repos in selected copilot-review.yml, not property matches; expand it there. Paid: AI credits per review, no seats or pooled allowance; review_on_push=false caps about one review per PR."
   type        = string
   default     = "active"
 
@@ -156,9 +132,7 @@ variable "org_copilot_review_enforcement" {
 }
 
 variable "org_push_protection_enforcement" {
-  description = <<-EOT
-    Native max_file_size and file_extension_restriction rules cover every repo/ref at the git layer, without workflow runs.
-  EOT
+  description = "Native max_file_size and file_extension_restriction rules cover every repo/ref at the git layer, without workflow runs."
   type        = string
   default     = "active"
 
@@ -186,17 +160,13 @@ variable "unmanaged_repositories" {
 }
 
 variable "codeql_import_enabled" {
-  description = <<-EOT
-    Whether import blocks adopt live repos, org Actions settings, CodeQL setup and the Default runner group.
-  EOT
+  description = "Whether import blocks adopt live repos, org Actions settings, CodeQL setup and the Default runner group."
   type        = bool
   default     = true
 }
 
 variable "org_merge_gate_enforcement" {
-  description = <<-EOT
-    org-merge-gate-* required checks block merges to main; each selected repo needs a live gate context on main before activation or its PRs freeze.
-  EOT
+  description = "org-merge-gate-* required checks block merges to main; each selected repo needs a live gate context on main before activation or its PRs freeze."
   type        = string
   default     = "active"
 
@@ -207,9 +177,7 @@ variable "org_merge_gate_enforcement" {
 }
 
 variable "merge_gate_strict_enforcement" {
-  description = <<-EOT
-    org-merge-gate-strict-* required checks require pull requests to be up to date with their base branch before merging, except for the automation apps in merge-gate-strict.tf. Evaluate reports in Insights without blocking.
-  EOT
+  description = "org-merge-gate-strict-* required checks require pull requests to be up to date with their base branch before merging, except for the automation apps in merge-gate-strict.tf. Evaluate reports in Insights without blocking."
   type        = string
   default     = "evaluate"
 
@@ -220,9 +188,7 @@ variable "merge_gate_strict_enforcement" {
 }
 
 variable "org_upstream_fork_protection_enforcement" {
-  description = <<-EOT
-    For upstream_fork=true, default branch requires PRs and merge commits; deletion and force-push are forbidden.
-  EOT
+  description = "For upstream_fork=true, default branch requires PRs and merge commits; deletion and force-push are forbidden."
   type        = string
   default     = "active"
 
@@ -233,9 +199,7 @@ variable "org_upstream_fork_protection_enforcement" {
 }
 
 variable "org_branch_write_restriction_enforcement" {
-  description = <<-EOT
-    Org-wide active branch-write restriction blocks actors outside var.automation_bypass_app_ids from creating/updating branches except main.
-  EOT
+  description = "Org-wide active branch-write restriction blocks actors outside var.automation_bypass_app_ids from creating/updating branches except main."
   type        = string
   default     = "active"
 
@@ -245,23 +209,8 @@ variable "org_branch_write_restriction_enforcement" {
   }
 }
 
-variable "default_branch_merge_restriction_enforcement" {
-  description = <<-EOT
-    Enforcement level for the default-branch merge restriction ruleset.
-  EOT
-  type        = string
-  default     = "active"
-
-  validation {
-    condition     = contains(["disabled", "evaluate", "active"], var.default_branch_merge_restriction_enforcement)
-    error_message = "default_branch_merge_restriction_enforcement must be one of: disabled, evaluate, active."
-  }
-}
-
 variable "automation_bypass_app_ids" {
-  description = <<-EOT
-    Required workspace list with no default: GitHub App IDs allowed to create/update branches covered by the restriction. Non-empty avoids locking out all automation; include every branch-writer (Actions, dependency-update, release, and org apps).
-  EOT
+  description = "Required workspace list with no default: GitHub App IDs allowed to create/update branches covered by the restriction. Non-empty avoids locking out all automation; include every branch-writer (Actions, dependency-update, release, and org apps)."
   type        = list(number)
 
   validation {
@@ -271,9 +220,7 @@ variable "automation_bypass_app_ids" {
 }
 
 variable "merge_bypass_app_ids" {
-  description = <<-EOT
-    GitHub App IDs allowed to update repositories listed in merge-restriction.yml through pull requests.
-  EOT
+  description = "GitHub App IDs allowed to update repositories listed in merge-restriction.yml through pull requests."
   type        = list(number)
   default     = []
 }
@@ -297,9 +244,7 @@ variable "dryvist_org_extras" {
 }
 
 variable "org_automerge_manual_enforcement" {
-  description = <<-EOT
-    Enforces automerge=manual review: one approval on main/develop; OrganizationAdmin, configured agent, triage, and release apps bypass.
-  EOT
+  description = "Enforces automerge=manual review: one approval on main/develop; OrganizationAdmin, configured agent, triage, and release apps bypass."
   type        = string
   default     = "active"
 

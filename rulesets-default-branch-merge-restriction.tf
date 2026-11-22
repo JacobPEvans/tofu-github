@@ -3,7 +3,7 @@ resource "github_organization_ruleset" "org_default_branch_merge_restriction" {
   count       = length(local.merge_restriction_config.repos) == 0 ? 0 : 1
   name        = "org-default-branch-merge-restriction"
   target      = "branch"
-  enforcement = var.default_branch_merge_restriction_enforcement
+  enforcement = "active"
 
   lifecycle {
     precondition {
