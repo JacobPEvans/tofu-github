@@ -1001,7 +1001,9 @@ run "default_branch_merge_restriction_uses_owner_repos_and_bypass_apps" {
       length(github_organization_ruleset.org_default_branch_merge_restriction[0].conditions[0].ref_name[0].exclude) == 0 &&
       tolist(github_organization_ruleset.org_default_branch_merge_restriction[0].conditions[0].repository_name[0].include) == tolist(["x"]) &&
       length(github_organization_ruleset.org_default_branch_merge_restriction[0].rules) == 1 &&
-      github_organization_ruleset.org_default_branch_merge_restriction[0].rules[0].update == true
+      github_organization_ruleset.org_default_branch_merge_restriction[0].rules[0].update == true &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].rules[0].deletion != true &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].rules[0].non_fast_forward != true
     )
     error_message = "The canary ruleset must target the configured repositories and default branches with only the update rule enabled."
   }
