@@ -34,7 +34,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    uses: JacobPEvans/.github-ai/.github/workflows/cc-ci-fix.yml@281780d989c47cde3d6113bc2818f7cacef806dd # v2.62.0
+    uses: JacobPEvans/.github-ai/.github/workflows/cc-ci-fix.yml@577e94bb48453ee7c0657c7a41eb0af6e55dfd95 # v2.70.0
     secrets: inherit
     with:
       runner_label: ${{ (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && 'review' || 'ubuntu-latest' }}
@@ -58,7 +58,7 @@ jobs:
       contents: read
       id-token: write
       pull-requests: write
-    uses: JacobPEvans/.github-ai/.github/workflows/cc-conflict-fix.yml@281780d989c47cde3d6113bc2818f7cacef806dd # v2.62.0
+    uses: JacobPEvans/.github-ai/.github/workflows/cc-conflict-fix.yml@577e94bb48453ee7c0657c7a41eb0af6e55dfd95 # v2.70.0
     secrets: inherit
     with:
       conflict_pr: ${{ inputs.conflict_pr }}
