@@ -6,7 +6,12 @@
 #   repo_context: what the repository is and how it builds -> CI_FIX_REPO_CONTEXT (default: the description)
 #   ci_structure: which checks CI runs and how to run them locally -> CI_FIX_CI_STRUCTURE
 #   extra_tools:  extra allowed agent tools, e.g. Bash(tofu:*) -> CI_FIX_EXTRA_TOOLS
+#   ai_agent_ci_fix_enabled: enable the CI-fix workflow -> AI_AGENT_CI_FIX_ENABLED
+#   ai_agent_pr_review_enabled: enable the PR review responder workflow -> AI_AGENT_PR_REVIEW_ENABLED
 repositories:
   tofu-github:
     repo_context: OpenTofu configuration for GitHub organizations and repositories
     ci_structure: CI Gate aggregates the repository's lint, test and contract checks.
+  .github:
+    ai_agent_ci_fix_enabled: 'true'
+    ai_agent_pr_review_enabled: 'true'
