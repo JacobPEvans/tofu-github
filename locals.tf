@@ -21,6 +21,9 @@ locals {
   ai_untrusted_config = try(yamldecode(file("${local.org_config_dir}/ai-untrusted.yml")), {
     repos = []
   })
+  merge_restriction_config = try(yamldecode(file("${local.org_config_dir}/merge-restriction.yml")), {
+    repos = []
+  })
   docs_publisher            = try(yamldecode(file("${local.org_config_dir}/docs-publisher.yml")), {})
   required_workflows_config = try(yamldecode(file("${local.org_config_dir}/required-workflows.yml")), {})
   merge_hold_config         = try(yamldecode(file("${local.org_config_dir}/merge-hold.yml")), null)

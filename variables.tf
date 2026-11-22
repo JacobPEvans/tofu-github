@@ -245,6 +245,19 @@ variable "org_branch_write_restriction_enforcement" {
   }
 }
 
+variable "default_branch_merge_restriction_enforcement" {
+  description = <<-EOT
+    Enforcement level for the default-branch merge restriction ruleset.
+  EOT
+  type        = string
+  default     = "active"
+
+  validation {
+    condition     = contains(["disabled", "evaluate", "active"], var.default_branch_merge_restriction_enforcement)
+    error_message = "default_branch_merge_restriction_enforcement must be one of: disabled, evaluate, active."
+  }
+}
+
 variable "automation_bypass_app_ids" {
   description = <<-EOT
     Required workspace list with no default: GitHub App IDs allowed to create/update branches covered by the restriction. Non-empty avoids locking out all automation; include every branch-writer (Actions, dependency-update, release, and org apps).
@@ -255,6 +268,14 @@ variable "automation_bypass_app_ids" {
     condition     = length(var.automation_bypass_app_ids) > 0
     error_message = "automation_bypass_app_ids must list at least one GitHub App ID."
   }
+}
+
+variable "merge_bypass_app_ids" {
+  description = <<-EOT
+    GitHub App IDs allowed to update repositories listed in merge-restriction.yml through pull requests.
+  EOT
+  type        = list(number)
+  default     = []
 }
 
 # Workspace selectors.

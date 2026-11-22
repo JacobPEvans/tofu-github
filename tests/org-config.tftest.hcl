@@ -597,6 +597,7 @@ run "org_opt_in_reads_its_own_private_repo_overrides" {
     github_owner              = "tofu-test-fixture-private"
     dryvist_org_extras        = false
     automation_bypass_app_ids = [1]
+    merge_bypass_app_ids      = [1]
     codeql_import_enabled     = false
   }
 
@@ -944,6 +945,92 @@ run "merge_hold_ruleset_follows_the_owner_config" {
     )
     error_message = "merge-hold.yml must set the ruleset's enforcement, repositories, the merge-hold context and the admin bypass."
   }
+}
+
+run "default_branch_merge_restriction_is_absent_without_org_config" {
+  command = plan
+
+  variables {
+    github_owner              = "example-org"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  assert {
+    condition     = length(github_organization_ruleset.org_default_branch_merge_restriction) == 0
+    error_message = "An organization without merge-restriction.yml must not receive the default-branch merge ruleset."
+  }
+}
+
+run "empty_default_branch_merge_restriction_repos_plan_no_ruleset" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  assert {
+    condition = (
+      local.merge_restriction_config.repos == [] &&
+      length(github_organization_ruleset.org_default_branch_merge_restriction) == 0
+    )
+    error_message = "An empty repos list must not plan the default-branch merge ruleset."
+  }
+}
+
+run "default_branch_merge_restriction_uses_owner_repos_and_bypass_apps" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture-private"
+    dryvist_org_extras        = false
+    automation_bypass_app_ids = [1]
+    merge_bypass_app_ids      = [1, 2]
+    codeql_import_enabled     = false
+  }
+
+  assert {
+    condition = (
+      length(github_organization_ruleset.org_default_branch_merge_restriction) == 1 &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].name == "org-default-branch-merge-restriction" &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].target == "branch" &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].enforcement == "active" &&
+      tolist(github_organization_ruleset.org_default_branch_merge_restriction[0].conditions[0].ref_name[0].include) == tolist(["~DEFAULT_BRANCH", "refs/heads/main", "refs/heads/develop"]) &&
+      length(github_organization_ruleset.org_default_branch_merge_restriction[0].conditions[0].ref_name[0].exclude) == 0 &&
+      tolist(github_organization_ruleset.org_default_branch_merge_restriction[0].conditions[0].repository_name[0].include) == tolist(["x"]) &&
+      length(github_organization_ruleset.org_default_branch_merge_restriction[0].rules) == 1 &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].rules[0].update == true
+    )
+    error_message = "The canary ruleset must target the configured repositories and default branches with only the update rule enabled."
+  }
+
+  assert {
+    condition = (
+      length(github_organization_ruleset.org_default_branch_merge_restriction[0].bypass_actors) == 3 &&
+      length([for actor in github_organization_ruleset.org_default_branch_merge_restriction[0].bypass_actors : actor if actor.actor_type == "Integration" && actor.bypass_mode == "pull_request"]) == 2 &&
+      toset([for actor in github_organization_ruleset.org_default_branch_merge_restriction[0].bypass_actors : actor.actor_id if actor.actor_type == "Integration"]) == toset([1, 2]) &&
+      length([for actor in github_organization_ruleset.org_default_branch_merge_restriction[0].bypass_actors : actor if actor.actor_type == "OrganizationAdmin" && actor.actor_id == null && actor.bypass_mode == "pull_request"]) == 1
+    )
+    error_message = "The canary ruleset must allow both configured apps and OrganizationAdmin to bypass through pull requests only."
+  }
+}
+
+run "default_branch_merge_restriction_requires_an_app_bypass" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture-private"
+    dryvist_org_extras        = false
+    automation_bypass_app_ids = [1]
+    merge_bypass_app_ids      = []
+    codeql_import_enabled     = false
+  }
+
+  expect_failures = [
+    github_organization_ruleset.org_default_branch_merge_restriction[0],
+  ]
 }
 
 run "fork_approval_defaults_to_all_external_contributors" {
