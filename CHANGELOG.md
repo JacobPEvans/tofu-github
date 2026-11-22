@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.87.0](https://github.com/JacobPEvans/tofu-github/compare/v1.86.0...v1.87.0) (2026-11-22)
+
+
+### Features
+
+* **config:** declare the fixer enable variables for five repositories ([#589](https://github.com/JacobPEvans/tofu-github/issues/589)) ([ba86288](https://github.com/JacobPEvans/tofu-github/commit/ba86288425f283884919b6c87398213b92806327))
+
 ## [1.86.0](https://github.com/JacobPEvans/tofu-github/compare/v1.85.0...v1.86.0) (2026-11-21)
 
 
