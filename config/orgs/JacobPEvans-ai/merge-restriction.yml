@@ -1,0 +1,5 @@
+# Repositories whose default branch accepts updates only through pull requests
+# merged by the GitHub Apps in the merge_bypass_app_ids workspace variable.
+enforcement: active
+repos:
+  - merge-flow-fixture
