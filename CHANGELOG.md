@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.104.0](https://github.com/JacobPEvans/tofu-github/compare/v1.103.0...v1.104.0) (2026-11-23)
+
+
+### Features
+
+* **rulesets:** restrict default-branch updates on one JacobPEvans repository ([#623](https://github.com/JacobPEvans/tofu-github/issues/623)) ([fc924b0](https://github.com/JacobPEvans/tofu-github/commit/fc924b040db3f1f8c2e0d4648ba05bad51ecc12e))
+
 ## [1.103.0](https://github.com/JacobPEvans/tofu-github/compare/v1.102.0...v1.103.0) (2026-11-23)
 
 
