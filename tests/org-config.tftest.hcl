@@ -184,8 +184,8 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   }
 
   assert {
-    condition     = length(local.repos) == 0 && length(local.ruleset_imports) == 0
-    error_message = "An owner with no YAML overrides must use empty repo data and skip org-specific imports."
+    condition     = keys(local.repos) == ["prometheus-sql-exporter-collectors"] && length(local.ruleset_imports) == 0
+    error_message = "Repo data must come only from the owner's repos.yml, and org-specific imports must be skipped."
   }
 
   assert {
@@ -200,7 +200,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
 
   assert {
     condition = (
-      length(local.managed_repos) == 4 &&
+      length(local.managed_repos) == 5 &&
       local.managed_repos[".github"].visibility == "public" &&
       local.managed_repos[".github-private"].visibility == "private" &&
       local.managed_repos[".github-private"].description == "Members-only org profile and index" &&
@@ -214,7 +214,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   }
 
   assert {
-    condition     = length(module.repo_settings) == 4
+    condition     = length(module.repo_settings) == 5
     error_message = "Every managed repository must receive the shared repository settings module."
   }
 
@@ -913,6 +913,7 @@ run "merge_hold_ruleset_follows_the_owner_config" {
   variables {
     github_owner              = "JacobPEvans-ai"
     automation_bypass_app_ids = [1]
+    merge_bypass_app_ids      = [2]
     codeql_import_enabled     = false
   }
 
