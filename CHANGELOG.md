@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.103.0](https://github.com/JacobPEvans/tofu-github/compare/v1.102.0...v1.103.0) (2026-11-23)
+
+
+### Features
+
+* **rulesets:** Merge Gate for five more owners, and no admin bypass on required checks ([#631](https://github.com/JacobPEvans/tofu-github/issues/631)) ([31ae9d2](https://github.com/JacobPEvans/tofu-github/commit/31ae9d2a2bdaff262594e6f66559379dd0449082))
+
 ## [1.102.0](https://github.com/JacobPEvans/tofu-github/compare/v1.101.0...v1.102.0) (2026-11-22)
 
 
