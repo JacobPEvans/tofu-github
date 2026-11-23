@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.105.0](https://github.com/JacobPEvans/tofu-github/compare/v1.104.0...v1.105.0) (2026-11-23)
+
+
+### Features
+
+* **ci-fix:** declare the CI-fix dry-run variable and let nix-ai publish fixes ([#638](https://github.com/JacobPEvans/tofu-github/issues/638)) ([5cd0691](https://github.com/JacobPEvans/tofu-github/commit/5cd0691e976cbb37fb22dca321665239fa47fd4b))
+
 ## [1.104.0](https://github.com/JacobPEvans/tofu-github/compare/v1.103.0...v1.104.0) (2026-11-23)
 
 
