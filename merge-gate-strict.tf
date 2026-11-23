@@ -3,8 +3,8 @@
 # Targets the same refs, repos and contexts as org_merge_gate (merge-gate.tf),
 # which leaves strict off. A pull request on those refs must be current with
 # its base branch before it merges, except for the apps in the bypass list.
-# Those apps still face the gate check through org_merge_gate, whose only
-# bypass is OrganizationAdmin.
+# Those apps still face the gate check through org_merge_gate, which has no
+# bypass actors.
 data "github_app" "renovate" {
   slug = "renovate"
 }
@@ -50,10 +50,6 @@ resource "github_organization_ruleset" "org_merge_gate_strict" {
     }
   }
 
-  bypass_actors {
-    actor_type  = "OrganizationAdmin"
-    bypass_mode = "pull_request"
-  }
 
   # AI-agent apps (agent_bypass_app_ids in automerge.yml) are deliberately absent from this list.
   dynamic "bypass_actors" {

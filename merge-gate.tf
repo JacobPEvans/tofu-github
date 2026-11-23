@@ -11,9 +11,11 @@
 #
 # strict policy is off here. The sibling ruleset org_merge_gate_strict
 # (merge-gate-strict.tf) enforces it on the same refs, repos and contexts,
-# with the automation apps in its bypass list exempt.
+# with the automation apps in its bypass list exempt. This ruleset applies to
+# every owner with a merge-gate.yml; the strict one only where
+# dryvist_org_extras is on.
 resource "github_organization_ruleset" "org_merge_gate" {
-  for_each = var.dryvist_org_extras ? local.merge_gate_contexts : {}
+  for_each = local.merge_gate_contexts
 
   name        = "org-merge-gate-${each.key}"
   target      = "branch"
@@ -53,8 +55,4 @@ resource "github_organization_ruleset" "org_merge_gate" {
     }
   }
 
-  bypass_actors {
-    actor_type  = "OrganizationAdmin"
-    bypass_mode = "pull_request"
-  }
 }

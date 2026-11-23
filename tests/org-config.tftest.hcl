@@ -184,8 +184,8 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   }
 
   assert {
-    condition     = length(local.repos) == 0 && length(local.ruleset_imports) == 0
-    error_message = "An owner with no YAML overrides must use empty repo data and skip org-specific imports."
+    condition     = keys(local.repos) == ["prometheus-sql-exporter-collectors"] && length(local.ruleset_imports) == 0
+    error_message = "Repo data must come only from the owner's repos.yml, and org-specific imports must be skipped."
   }
 
   assert {
@@ -200,7 +200,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
 
   assert {
     condition = (
-      length(local.managed_repos) == 4 &&
+      length(local.managed_repos) == 5 &&
       local.managed_repos[".github"].visibility == "public" &&
       local.managed_repos[".github-private"].visibility == "private" &&
       local.managed_repos[".github-private"].description == "Members-only org profile and index" &&
@@ -214,7 +214,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   }
 
   assert {
-    condition     = length(module.repo_settings) == 4
+    condition     = length(module.repo_settings) == 5
     error_message = "Every managed repository must receive the shared repository settings module."
   }
 
@@ -829,19 +829,18 @@ run "merge_gate_strict_exempts_only_listed_apps" {
 
   assert {
     condition = (
-      length(github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors) == 2 &&
-      length([for actor in github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors : actor if actor.actor_type == "OrganizationAdmin"]) == 1 &&
+      length(github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors) == 1 &&
       toset([for actor in github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors : actor.actor_id if actor.actor_type == "Integration"]) == toset([tonumber(data.github_app.renovate.id)])
     )
-    error_message = "The strict ruleset must bypass only OrganizationAdmin and the Renovate app when the fixture has no automation app config."
+    error_message = "The strict ruleset must bypass only the Renovate app when the fixture has no automation app config."
   }
 
   assert {
     condition = (
       github_organization_ruleset.org_merge_gate["gate"].rules[0].required_status_checks[0].strict_required_status_checks_policy == false &&
-      [for actor in github_organization_ruleset.org_merge_gate["gate"].bypass_actors : actor.actor_type] == ["OrganizationAdmin"]
+      length(github_organization_ruleset.org_merge_gate["gate"].bypass_actors) == 0
     )
-    error_message = "The existing merge gate must keep strict off and bypass only OrganizationAdmin, so bot pull requests still face the gate check."
+    error_message = "The existing merge gate must keep strict off and have no bypass actors, so every pull request still face the gate check."
   }
 }
 
@@ -913,6 +912,7 @@ run "merge_hold_ruleset_follows_the_owner_config" {
   variables {
     github_owner              = "JacobPEvans-ai"
     automation_bypass_app_ids = [1]
+    merge_bypass_app_ids      = [2]
     codeql_import_enabled     = false
   }
 
@@ -1243,5 +1243,39 @@ run "unmanaged_repository_labels_are_not_read" {
   assert {
     condition     = toset(keys(github_issue_label.org)) == toset(["client/bug", "sample/bug"])
     error_message = "Label resources must stay in the configuration for every enumerated repository."
+  }
+}
+
+run "merge_gate_follows_the_owner_file_without_org_extras" {
+  command = plan
+
+  variables {
+    github_owner              = "jpe-cribl"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+    dryvist_org_extras        = false
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  override_resource {
+    target = github_organization_custom_properties.family
+    values = {
+      default_value = null
+    }
+  }
+
+  assert {
+    condition = (
+      length(github_organization_ruleset.org_merge_gate) > 0 &&
+      alltrue([for ruleset in github_organization_ruleset.org_merge_gate : length(ruleset.bypass_actors) == 0]) &&
+      length(github_organization_ruleset.org_merge_gate_strict) == 0
+    )
+    error_message = "An owner with merge-gate.yml must get the merge gate with no bypass actors even without org extras, and no strict ruleset."
   }
 }
