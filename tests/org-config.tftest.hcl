@@ -1245,3 +1245,37 @@ run "unmanaged_repository_labels_are_not_read" {
     error_message = "Label resources must stay in the configuration for every enumerated repository."
   }
 }
+
+run "merge_gate_follows_the_owner_file_without_org_extras" {
+  command = plan
+
+  variables {
+    github_owner              = "jpe-cribl"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+    dryvist_org_extras        = false
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  override_resource {
+    target = github_organization_custom_properties.family
+    values = {
+      default_value = null
+    }
+  }
+
+  assert {
+    condition = (
+      length(github_organization_ruleset.org_merge_gate) > 0 &&
+      alltrue([for ruleset in github_organization_ruleset.org_merge_gate : length(ruleset.bypass_actors) == 0]) &&
+      length(github_organization_ruleset.org_merge_gate_strict) == 0
+    )
+    error_message = "An owner with merge-gate.yml must get the merge gate with no bypass actors even without org extras, and no strict ruleset."
+  }
+}
