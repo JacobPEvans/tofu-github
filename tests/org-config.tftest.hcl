@@ -91,6 +91,11 @@ mock_provider "restapi" {
   alias = "no_body"
 }
 
+# Owners with a merge-restriction.yml need a merge bypass app; runs that test other values set their own.
+variables {
+  merge_bypass_app_ids = [2]
+}
+
 run "empty_non_dryvist_config_plans_from_live_repo_data" {
   command = plan
 
@@ -912,7 +917,6 @@ run "merge_hold_ruleset_follows_the_owner_config" {
   variables {
     github_owner              = "JacobPEvans-ai"
     automation_bypass_app_ids = [1]
-    merge_bypass_app_ids      = [2]
     codeql_import_enabled     = false
   }
 
