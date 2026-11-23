@@ -829,19 +829,18 @@ run "merge_gate_strict_exempts_only_listed_apps" {
 
   assert {
     condition = (
-      length(github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors) == 2 &&
-      length([for actor in github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors : actor if actor.actor_type == "OrganizationAdmin"]) == 1 &&
+      length(github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors) == 1 &&
       toset([for actor in github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors : actor.actor_id if actor.actor_type == "Integration"]) == toset([tonumber(data.github_app.renovate.id)])
     )
-    error_message = "The strict ruleset must bypass only OrganizationAdmin and the Renovate app when the fixture has no automation app config."
+    error_message = "The strict ruleset must bypass only the Renovate app when the fixture has no automation app config."
   }
 
   assert {
     condition = (
       github_organization_ruleset.org_merge_gate["gate"].rules[0].required_status_checks[0].strict_required_status_checks_policy == false &&
-      [for actor in github_organization_ruleset.org_merge_gate["gate"].bypass_actors : actor.actor_type] == ["OrganizationAdmin"]
+      length(github_organization_ruleset.org_merge_gate["gate"].bypass_actors) == 0
     )
-    error_message = "The existing merge gate must keep strict off and bypass only OrganizationAdmin, so bot pull requests still face the gate check."
+    error_message = "The existing merge gate must keep strict off and have no bypass actors, so every pull request still face the gate check."
   }
 }
 
