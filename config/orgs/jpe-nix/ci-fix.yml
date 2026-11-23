@@ -8,7 +8,9 @@
 #   extra_tools:  extra allowed agent tools, e.g. Bash(tofu:*) -> CI_FIX_EXTRA_TOOLS
 #   ai_agent_ci_fix_enabled: enable the CI-fix workflow -> AI_AGENT_CI_FIX_ENABLED
 #   ai_agent_pr_review_enabled: enable the PR review responder workflow -> AI_AGENT_PR_REVIEW_ENABLED
+#   ai_agent_ci_fix_dry_run: 'false' lets the CI-fix workflow publish its fix -> AI_AGENT_CI_FIX_DRY_RUN
 repositories:
   nix-ai:
     ai_agent_ci_fix_enabled: 'true'
+    ai_agent_ci_fix_dry_run: 'false'
     ai_agent_pr_review_enabled: 'true'
