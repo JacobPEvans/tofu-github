@@ -1,3 +1,3 @@
-# Evaluate inherited CI on the canary repository's default-branch pull requests.
+# Evaluate inherited CI on the pack template's default-branch pull requests.
 inherited_ci_canary: true
-inherited_ci_canary_repository: cc-stream-macos-fanout-io
+inherited_ci_canary_repository: cc-stream-pack-template
