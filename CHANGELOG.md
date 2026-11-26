@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.107.0](https://github.com/JacobPEvans/tofu-github/compare/v1.106.0...v1.107.0) (2026-11-26)
+
+
+### Features
+
+* **jpe-cribl:** create the raw event archive pack and the Ubiquiti syslog fork ([#647](https://github.com/JacobPEvans/tofu-github/issues/647)) ([67eebb0](https://github.com/JacobPEvans/tofu-github/commit/67eebb0aad026629e955cca2964622f406d2ba8d))
+
 ## [1.106.0](https://github.com/JacobPEvans/tofu-github/compare/v1.105.0...v1.106.0) (2026-11-26)
 
 
