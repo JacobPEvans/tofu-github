@@ -21,6 +21,9 @@ locals {
   ai_untrusted_config = try(yamldecode(file("${local.org_config_dir}/ai-untrusted.yml")), {
     repos = []
   })
+  merge_restriction_config = try(yamldecode(file("${local.org_config_dir}/merge-restriction.yml")), {
+    repos = []
+  })
   docs_publisher            = try(yamldecode(file("${local.org_config_dir}/docs-publisher.yml")), {})
   required_workflows_config = try(yamldecode(file("${local.org_config_dir}/required-workflows.yml")), {})
   merge_hold_config         = try(yamldecode(file("${local.org_config_dir}/merge-hold.yml")), null)
@@ -31,6 +34,8 @@ locals {
   org_merge_gate_contexts = try(yamldecode(file("${local.org_config_dir}/merge-gate.yml")).merge_gate.contexts, {})
   # An org whose gates include private repos fails its plan when the private overrides are missing.
   merge_gate_requires_private_repos = try(yamldecode(file("${local.org_config_dir}/merge-gate.yml")).merge_gate.requires_private_repos, false)
+  # An org outside the merge-gate path opts in to its own private overrides document.
+  private_overrides_opt_in = try(yamldecode(file("${local.org_config_dir}/private-overrides.yml")).enabled, false)
   # Repo metadata is not a credential; its names must be usable as managed-resource keys.
   # The data source has no instance for other orgs, so the index fails and try() yields {}.
   private_repo_overrides = try(

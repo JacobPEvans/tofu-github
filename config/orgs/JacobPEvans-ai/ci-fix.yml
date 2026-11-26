@@ -1,0 +1,22 @@
+---
+# Per-repository text for the canonical CI-fix caller, set as repository variables by ci-fix-variables.tf.
+# List public repositories only; a private repository sets the same keys under `ci_fix` in its private override.
+#
+# Schema (per repository, every key optional):
+#   repo_context: what the repository is and how it builds -> CI_FIX_REPO_CONTEXT (default: the description)
+#   ci_structure: which checks CI runs and how to run them locally -> CI_FIX_CI_STRUCTURE
+#   extra_tools:  extra allowed agent tools, e.g. Bash(tofu:*) -> CI_FIX_EXTRA_TOOLS
+#   ai_agent_ci_fix_enabled: enable the CI-fix workflow -> AI_AGENT_CI_FIX_ENABLED
+#   ai_agent_pr_review_enabled: enable the PR review responder workflow -> AI_AGENT_PR_REVIEW_ENABLED
+repositories:
+  claude-code-plugins:
+    ci_structure: CI Gate (Markdown lint and file size checks, aggregated in Merge Gate); Validate Claude Code Plugin
+      (manifest validation and plugin tests)
+  merge-flow-fixture:
+    repo_context: Upstream merge-flow fixture; nothing here is production.
+    ci_structure: CI Gate aggregates Markdown Lint and File Size into the Merge Gate check.
+  pr-automation-fixture:
+    ci_structure: Markdown Lint (markdownlint over every Markdown file in the repository)
+  llm-prompt-evals:
+    ai_agent_ci_fix_enabled: 'true'
+    ai_agent_pr_review_enabled: 'true'

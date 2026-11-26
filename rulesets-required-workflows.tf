@@ -34,10 +34,6 @@ resource "github_organization_ruleset" "markdown_lint" {
     }
   }
 
-  bypass_actors {
-    actor_type  = "OrganizationAdmin"
-    bypass_mode = "pull_request"
-  }
 }
 
 moved {
@@ -89,10 +85,6 @@ resource "github_organization_ruleset" "conventions" {
     }
   }
 
-  bypass_actors {
-    actor_type  = "OrganizationAdmin"
-    bypass_mode = "pull_request"
-  }
 }
 
 moved {

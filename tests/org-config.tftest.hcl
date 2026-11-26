@@ -91,6 +91,11 @@ mock_provider "restapi" {
   alias = "no_body"
 }
 
+# Owners with a merge-restriction.yml need a merge bypass app; runs that test other values set their own.
+variables {
+  merge_bypass_app_ids = [2]
+}
+
 run "empty_non_dryvist_config_plans_from_live_repo_data" {
   command = plan
 
@@ -164,8 +169,28 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   }
 
   assert {
-    condition     = length(local.repos) == 0 && length(local.ruleset_imports) == 0
-    error_message = "An owner with no YAML overrides must use empty repo data and skip org-specific imports."
+    condition = (
+      github_actions_variable.ci_fix["tofu-github/CI_FIX_CI_STRUCTURE"].repository == "tofu-github" &&
+      github_actions_variable.ci_fix["tofu-github/CI_FIX_CI_STRUCTURE"].value == local.ci_fix_config.repositories["tofu-github"].ci_structure &&
+      contains(keys(github_actions_variable.ci_fix), "tofu-github/CI_FIX_REPO_CONTEXT") &&
+      !contains(keys(github_actions_variable.ci_fix), "tofu-github/CI_FIX_EXTRA_TOOLS")
+    )
+    error_message = "CI fix variables must come from the owner's ci-fix.yml, one per non-empty key."
+  }
+
+  assert {
+    condition = (
+      length(github_actions_variable.pr_reconcile_merge) == 1 &&
+      github_actions_variable.pr_reconcile_merge[0].repository == local.pr_reconcile_config.sweep_repository &&
+      github_actions_variable.pr_reconcile_merge[0].variable_name == "PR_RECONCILE_MERGE" &&
+      github_actions_variable.pr_reconcile_merge[0].value == "true"
+    )
+    error_message = "The sweep merge variable must come from the owner's pr-reconcile.yml."
+  }
+
+  assert {
+    condition     = keys(local.repos) == ["prometheus-sql-exporter-collectors"] && length(local.ruleset_imports) == 0
+    error_message = "Repo data must come only from the owner's repos.yml, and org-specific imports must be skipped."
   }
 
   assert {
@@ -180,7 +205,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
 
   assert {
     condition = (
-      length(local.managed_repos) == 4 &&
+      length(local.managed_repos) == 5 &&
       local.managed_repos[".github"].visibility == "public" &&
       local.managed_repos[".github-private"].visibility == "private" &&
       local.managed_repos[".github-private"].description == "Members-only org profile and index" &&
@@ -194,7 +219,7 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   }
 
   assert {
-    condition     = length(module.repo_settings) == 4
+    condition     = length(module.repo_settings) == 5
     error_message = "Every managed repository must receive the shared repository settings module."
   }
 
@@ -570,6 +595,35 @@ run "private_merge_gate_repos_share_one_gate" {
   }
 }
 
+run "org_opt_in_reads_its_own_private_repo_overrides" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture-private"
+    dryvist_org_extras        = false
+    automation_bypass_app_ids = [1]
+    merge_bypass_app_ids      = [1]
+    codeql_import_enabled     = false
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  assert {
+    condition     = data.vault_kv_secret_v2.private_repo_overrides[0].name == "infrastructure/tofu-github/private-overrides-tofu-test-fixture-private"
+    error_message = "An opted-in org must read its own private overrides document."
+  }
+
+  assert {
+    condition     = length(setintersection(toset(keys(local.repos)), toset(["example-a", "example-b"]))) == 2
+    error_message = "Private overrides read through the org opt-in must be merged into the org's repos."
+  }
+}
+
 run "placeholder_org_disables_org_specific_extras" {
   command = plan
 
@@ -780,19 +834,18 @@ run "merge_gate_strict_exempts_only_listed_apps" {
 
   assert {
     condition = (
-      length(github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors) == 2 &&
-      length([for actor in github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors : actor if actor.actor_type == "OrganizationAdmin"]) == 1 &&
+      length(github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors) == 1 &&
       toset([for actor in github_organization_ruleset.org_merge_gate_strict["gate"].bypass_actors : actor.actor_id if actor.actor_type == "Integration"]) == toset([tonumber(data.github_app.renovate.id)])
     )
-    error_message = "The strict ruleset must bypass only OrganizationAdmin and the Renovate app when the fixture has no automation app config."
+    error_message = "The strict ruleset must bypass only the Renovate app when the fixture has no automation app config."
   }
 
   assert {
     condition = (
       github_organization_ruleset.org_merge_gate["gate"].rules[0].required_status_checks[0].strict_required_status_checks_policy == false &&
-      [for actor in github_organization_ruleset.org_merge_gate["gate"].bypass_actors : actor.actor_type] == ["OrganizationAdmin"]
+      length(github_organization_ruleset.org_merge_gate["gate"].bypass_actors) == 0
     )
-    error_message = "The existing merge gate must keep strict off and bypass only OrganizationAdmin, so bot pull requests still face the gate check."
+    error_message = "The existing merge gate must keep strict off and have no bypass actors, so every pull request still face the gate check."
   }
 }
 
@@ -896,6 +949,94 @@ run "merge_hold_ruleset_follows_the_owner_config" {
     )
     error_message = "merge-hold.yml must set the ruleset's enforcement, repositories, the merge-hold context and the admin bypass."
   }
+}
+
+run "default_branch_merge_restriction_is_absent_without_org_config" {
+  command = plan
+
+  variables {
+    github_owner              = "example-org"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  assert {
+    condition     = length(github_organization_ruleset.org_default_branch_merge_restriction) == 0
+    error_message = "An organization without merge-restriction.yml must not receive the default-branch merge ruleset."
+  }
+}
+
+run "empty_default_branch_merge_restriction_repos_plan_no_ruleset" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+  }
+
+  assert {
+    condition = (
+      local.merge_restriction_config.repos == [] &&
+      length(github_organization_ruleset.org_default_branch_merge_restriction) == 0
+    )
+    error_message = "An empty repos list must not plan the default-branch merge ruleset."
+  }
+}
+
+run "default_branch_merge_restriction_uses_owner_repos_and_bypass_apps" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture-private"
+    dryvist_org_extras        = false
+    automation_bypass_app_ids = [1]
+    merge_bypass_app_ids      = [1, 2]
+    codeql_import_enabled     = false
+  }
+
+  assert {
+    condition = (
+      length(github_organization_ruleset.org_default_branch_merge_restriction) == 1 &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].name == "org-default-branch-merge-restriction" &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].target == "branch" &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].enforcement == "active" &&
+      tolist(github_organization_ruleset.org_default_branch_merge_restriction[0].conditions[0].ref_name[0].include) == tolist(["~DEFAULT_BRANCH", "refs/heads/main", "refs/heads/develop"]) &&
+      length(github_organization_ruleset.org_default_branch_merge_restriction[0].conditions[0].ref_name[0].exclude) == 0 &&
+      tolist(github_organization_ruleset.org_default_branch_merge_restriction[0].conditions[0].repository_name[0].include) == tolist(["x"]) &&
+      length(github_organization_ruleset.org_default_branch_merge_restriction[0].rules) == 1 &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].rules[0].update == true &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].rules[0].deletion != true &&
+      github_organization_ruleset.org_default_branch_merge_restriction[0].rules[0].non_fast_forward != true
+    )
+    error_message = "The canary ruleset must target the configured repositories and default branches with only the update rule enabled."
+  }
+
+  assert {
+    condition = (
+      length(github_organization_ruleset.org_default_branch_merge_restriction[0].bypass_actors) == 3 &&
+      length([for actor in github_organization_ruleset.org_default_branch_merge_restriction[0].bypass_actors : actor if actor.actor_type == "Integration" && actor.bypass_mode == "pull_request"]) == 2 &&
+      toset([for actor in github_organization_ruleset.org_default_branch_merge_restriction[0].bypass_actors : actor.actor_id if actor.actor_type == "Integration"]) == toset([1, 2]) &&
+      length([for actor in github_organization_ruleset.org_default_branch_merge_restriction[0].bypass_actors : actor if actor.actor_type == "OrganizationAdmin" && actor.actor_id == null && actor.bypass_mode == "pull_request"]) == 1
+    )
+    error_message = "The canary ruleset must allow both configured apps and OrganizationAdmin to bypass through pull requests only."
+  }
+}
+
+run "default_branch_merge_restriction_requires_an_app_bypass" {
+  command = plan
+
+  variables {
+    github_owner              = "tofu-test-fixture-private"
+    dryvist_org_extras        = false
+    automation_bypass_app_ids = [1]
+    merge_bypass_app_ids      = []
+    codeql_import_enabled     = false
+  }
+
+  expect_failures = [
+    github_organization_ruleset.org_default_branch_merge_restriction[0],
+  ]
 }
 
 run "fork_approval_defaults_to_all_external_contributors" {
@@ -1106,5 +1247,39 @@ run "unmanaged_repository_labels_are_not_read" {
   assert {
     condition     = toset(keys(github_issue_label.org)) == toset(["client/bug", "sample/bug"])
     error_message = "Label resources must stay in the configuration for every enumerated repository."
+  }
+}
+
+run "merge_gate_follows_the_owner_file_without_org_extras" {
+  command = plan
+
+  variables {
+    github_owner              = "jpe-cribl"
+    automation_bypass_app_ids = [1]
+    codeql_import_enabled     = false
+    dryvist_org_extras        = false
+  }
+
+  override_data {
+    target = data.github_repositories.existing
+    values = {
+      names = []
+    }
+  }
+
+  override_resource {
+    target = github_organization_custom_properties.family
+    values = {
+      default_value = null
+    }
+  }
+
+  assert {
+    condition = (
+      length(github_organization_ruleset.org_merge_gate) > 0 &&
+      alltrue([for ruleset in github_organization_ruleset.org_merge_gate : length(ruleset.bypass_actors) == 0]) &&
+      length(github_organization_ruleset.org_merge_gate_strict) == 0
+    )
+    error_message = "An owner with merge-gate.yml must get the merge gate with no bypass actors even without org extras, and no strict ruleset."
   }
 }

@@ -1,0 +1,3 @@
+---
+# Reads infrastructure/tofu-github/private-overrides-jpe-ai-agents for private repository settings.
+enabled: true

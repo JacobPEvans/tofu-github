@@ -1,0 +1,33 @@
+# Required-check inventory: the org Merge Gate for each registered public repo.
+#
+# A repo is listed only when its most recent merged pull request reported the
+# context on its head commit, from the GitHub Actions app. `gate` is the thin
+# caller (`gate / Merge Gate`); `bare` is the inline alls-green job (`Merge Gate`).
+# Repos reporting neither context are left out and stay ungated.
+#
+# Adding a repo to a list REQUIRES its check context to be live on every PR
+# first. A required check that never reports blocks every PR in the repo.
+#
+# Private repos are not listed here. They join only through this owner's
+# private overrides document, and requires_private_repos stays false, so this
+# file does not require one.
+merge_gate:
+  requires_private_repos: false
+  contexts:
+    gate:
+      context: "gate / Merge Gate"
+      repos:
+        - cc-edge-claude-code-io
+        - cc-edge-codex-io
+        - cc-edge-macos-firewall-io
+        - cc-edge-macos-process-telemetry-io
+        - cc-edge-macos-unified-logs-io
+        - cc-edge-macos-ws-monitor-io
+        - cc-edge-mlx-serving-io
+        - cc-edge-pack-template
+        - cc-stream-apple-mlx-metrics
+        - cc-stream-cribl-edge-host-metrics
+        - cc-stream-cribl-internal-telemetry
+        - cc-stream-macos-fanout-io
+        - cc-stream-openrouter-rest-io
+        - cc-stream-pack-template
