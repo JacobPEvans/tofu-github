@@ -1,0 +1,21 @@
+# Per-repo overrides for this organization. Schema: config/orgs/dryvist/repos.yml.
+repos:
+  cc-stream-raw-event-archive-io:
+    visibility: public
+    description: "Cribl Stream pack: archive every original event, unmodified, to S3-compatible object storage"
+    topics:
+      - archive
+      - cribl
+      - cribl-pack
+      - cribl-stream
+      - object-storage
+  cribl-ubiquiti-syslog:
+    visibility: public
+    fork_of: criblpacks/cribl-ubiquiti-syslog
+    description: "Fork of the Cribl Ubiquiti syslog pack with kernel firewall parsing, OCSF and CIM output"
+    topics:
+      - cribl
+      - cribl-pack
+      - cribl-stream
+      - ocsf
+      - ubiquiti
