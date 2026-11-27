@@ -9,13 +9,14 @@ repos:
       - cribl-pack
       - cribl-stream
       - object-storage
+  # Archived: the upstream pack installs unmodified from its own release; additions live in own packs.
   cribl-ubiquiti-syslog:
     visibility: public
     fork_of: criblpacks/cribl-ubiquiti-syslog
-    description: "Fork of the Cribl Ubiquiti syslog pack with kernel firewall parsing, OCSF and CIM output"
+    description: "Unmodified fork of the Cribl Ubiquiti syslog pack (archived; install upstream releases)"
     topics:
       - cribl
       - cribl-pack
       - cribl-stream
-      - ocsf
       - ubiquiti
+    archived: true
