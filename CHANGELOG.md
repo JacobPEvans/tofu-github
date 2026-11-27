@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.108.0](https://github.com/JacobPEvans/tofu-github/compare/v1.107.0...v1.108.0) (2026-11-27)
+
+
+### Features
+
+* **ci:** evaluate inherited CI on the Cribl canary ([#513](https://github.com/JacobPEvans/tofu-github/issues/513)) ([0236b7f](https://github.com/JacobPEvans/tofu-github/commit/0236b7f6e1747a9217561c361bf43d386ebfade5))
+
 ## [1.107.0](https://github.com/JacobPEvans/tofu-github/compare/v1.106.0...v1.107.0) (2026-11-26)
 
 
