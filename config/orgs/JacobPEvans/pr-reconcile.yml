@@ -3,6 +3,9 @@
 # owners are required. Repositories listed in the PR_RECONCILE_EXCLUDE_REPOS secret are skipped.
 sweep_repository: .github-ai
 claude_bot_app_id: "2956476"
+caller_repositories:
+  - .github-ai
+  - tofu-github
 # Optional: the caller workflow the sweep starts for a pull request that fails
 # a code check; a repository without that file is left alone.
 ci_fix_workflow: openhands-ci-fix.yml

@@ -159,6 +159,23 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
 
   assert {
     condition = (
+      toset(keys(github_actions_variable.pr_reconcile_claude_bot_id_for_callers)) ==
+      setsubtract(
+        toset(local.pr_reconcile_config.caller_repositories),
+        toset([local.pr_reconcile_config.sweep_repository]),
+      ) &&
+      alltrue([
+        for repository, variable in github_actions_variable.pr_reconcile_claude_bot_id_for_callers :
+        variable.repository == repository &&
+        variable.variable_name == "GH_APP_CLAUDE_BOT_ID" &&
+        variable.value == local.pr_reconcile_config.claude_bot_app_id
+      ])
+    )
+    error_message = "Each configured PR Reconcile caller except the sweep repository must receive the Claude bot app ID."
+  }
+
+  assert {
+    condition = (
       length(github_actions_variable.pr_reconcile_ci_fix_workflow) == 1 &&
       github_actions_variable.pr_reconcile_ci_fix_workflow[0].repository == local.pr_reconcile_config.sweep_repository &&
       github_actions_variable.pr_reconcile_ci_fix_workflow[0].variable_name == "PR_RECONCILE_CI_FIX_WORKFLOW" &&
@@ -679,6 +696,7 @@ run "placeholder_org_disables_org_specific_extras" {
       length(github_organization_ruleset.merge_hold) == 0,
       length(github_actions_variable.pr_reconcile_owners) == 0,
       length(github_actions_variable.pr_reconcile_claude_bot_id) == 0,
+      length(github_actions_variable.pr_reconcile_claude_bot_id_for_callers) == 0,
       length(github_actions_variable.pr_reconcile_ci_fix_workflow) == 0,
     ])
     error_message = "Organization-specific resources must have no instances when the opt-in is false."

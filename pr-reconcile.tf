@@ -32,6 +32,17 @@ resource "github_actions_variable" "pr_reconcile_claude_bot_id" {
   }
 }
 
+resource "github_actions_variable" "pr_reconcile_claude_bot_id_for_callers" {
+  for_each = setsubtract(
+    toset(try(local.pr_reconcile_config.caller_repositories, [])),
+    toset([try(local.pr_reconcile_config.sweep_repository, "")]),
+  )
+
+  repository    = each.value
+  variable_name = "GH_APP_CLAUDE_BOT_ID"
+  value         = try(local.pr_reconcile_config.claude_bot_app_id, "")
+}
+
 # Optional: the caller workflow file the sweep starts in a repository whose
 # pull request fails a code check. Unset, the sweep starts no CI fix.
 resource "github_actions_variable" "pr_reconcile_ci_fix_workflow" {
