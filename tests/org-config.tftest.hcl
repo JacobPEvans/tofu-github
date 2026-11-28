@@ -857,9 +857,9 @@ run "merge_gate_strict_exempts_only_listed_apps" {
   assert {
     condition = (
       github_organization_ruleset.org_merge_gate["gate"].rules[0].required_status_checks[0].strict_required_status_checks_policy == false &&
-      length(github_organization_ruleset.org_merge_gate["gate"].bypass_actors) == 0
+      alltrue([for ruleset in github_organization_ruleset.org_merge_gate : toset([for a in ruleset.bypass_actors : "${a.actor_type}:${coalesce(a.actor_id, 0)}:${a.bypass_mode}"]) == toset(concat(["OrganizationAdmin:0:pull_request"], [for id in local.rulesets_defaults.merge_gate.bypass_app_ids : "Integration:${id}:pull_request"]))])
     )
-    error_message = "The existing merge gate must keep strict off and have no bypass actors, so every pull request still face the gate check."
+    error_message = "The existing merge gate must keep strict off and let only org admins and the configured merge-gate apps bypass it, in pull request mode."
   }
 }
 
@@ -1291,9 +1291,9 @@ run "merge_gate_follows_the_owner_file_without_org_extras" {
   assert {
     condition = (
       length(github_organization_ruleset.org_merge_gate) > 0 &&
-      alltrue([for ruleset in github_organization_ruleset.org_merge_gate : length(ruleset.bypass_actors) == 0]) &&
+      alltrue([for ruleset in github_organization_ruleset.org_merge_gate : toset([for a in ruleset.bypass_actors : "${a.actor_type}:${coalesce(a.actor_id, 0)}:${a.bypass_mode}"]) == toset(concat(["OrganizationAdmin:0:pull_request"], [for id in local.rulesets_defaults.merge_gate.bypass_app_ids : "Integration:${id}:pull_request"]))]) &&
       length(github_organization_ruleset.org_merge_gate_strict) == 0
     )
-    error_message = "An owner with merge-gate.yml must get the merge gate with no bypass actors even without org extras, and no strict ruleset."
+    error_message = "An owner with merge-gate.yml must get the merge gate with only the admin and configured app bypass even without org extras, and no strict ruleset."
   }
 }
