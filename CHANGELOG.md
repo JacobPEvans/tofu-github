@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Releases are automated via release-please from Conventional Commits.
 
+## [1.111.0](https://github.com/JacobPEvans/tofu-github/compare/v1.110.0...v1.111.0) (2026-11-28)
+
+
+### Features
+
+* **merge-gate:** let org admins and configured apps merge past the gate in pull requests ([#662](https://github.com/JacobPEvans/tofu-github/issues/662)) ([c041943](https://github.com/JacobPEvans/tofu-github/commit/c041943bb07ec93f59221a549605643196c212f5))
+
 ## [1.110.0](https://github.com/JacobPEvans/tofu-github/compare/v1.109.0...v1.110.0) (2026-11-28)
 
 
