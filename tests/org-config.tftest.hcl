@@ -132,9 +132,10 @@ run "empty_non_dryvist_config_plans_from_live_repo_data" {
   assert {
     condition = (
       length(github_organization_ruleset.disclosure_gate) == 0 &&
-      length(github_organization_ruleset.main_source_gate) == 0
+      length(github_organization_ruleset.main_source_gate) == 0 &&
+      length(github_organization_ruleset.openhands_review) == 0
     )
-    error_message = "An owner without required-workflows.yml must not get either required-workflow gate."
+    error_message = "An owner without required-workflows.yml must not get any required-workflow gate."
   }
 
   assert {
@@ -354,6 +355,19 @@ run "required_workflow_gates_follow_the_owner_config" {
       length(github_organization_ruleset.disclosure_gate[0].bypass_actors) == 0
     )
     error_message = "disclosure_gate must require the org workflow on public default, main, and develop PRs without a bypass."
+  }
+
+  assert {
+    condition = (
+      length(github_organization_ruleset.openhands_review) == 1 &&
+      github_organization_ruleset.openhands_review[0].name == "org-openhands-review" &&
+      github_organization_ruleset.openhands_review[0].enforcement == "evaluate" &&
+      tolist(github_organization_ruleset.openhands_review[0].conditions[0].ref_name[0].include) == tolist(["~DEFAULT_BRANCH", "refs/heads/main", "refs/heads/develop"]) &&
+      tolist(one(github_organization_ruleset.openhands_review[0].conditions[0].repository_property[0].include).property_values) == tolist(["public"]) &&
+      one(github_organization_ruleset.openhands_review[0].rules[0].required_workflows[0].required_workflow).path == ".github/workflows/openhands-review.yml" &&
+      one(github_organization_ruleset.openhands_review[0].bypass_actors).actor_type == "OrganizationAdmin"
+    )
+    error_message = "openhands_review must require the org workflow on public default, main, and develop PRs at the configured enforcement, with the admin bypass."
   }
 
   assert {

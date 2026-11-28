@@ -221,6 +221,49 @@ resource "github_organization_ruleset" "disclosure_gate" {
   }
 }
 
+# Requires the OpenHands review workflow on public repository PRs targeting the
+# default, main, and develop branches. `openhands_review` in
+# `config/orgs/<owner>/required-workflows.yml` opts in each org and sets the
+# enforcement: evaluate reports the result, active gates the merge. The admin
+# bypass is the exit when the review runners or the model router are down.
+resource "github_organization_ruleset" "openhands_review" {
+  count       = try(local.required_workflows_config.openhands_review, null) != null ? 1 : 0
+  name        = "org-openhands-review"
+  target      = "branch"
+  enforcement = local.required_workflows_config.openhands_review
+
+  conditions {
+    ref_name {
+      include = ["~DEFAULT_BRANCH", "refs/heads/main", "refs/heads/develop"]
+      exclude = []
+    }
+    repository_property {
+      include = [{
+        name            = "visibility"
+        property_values = ["public"]
+        source          = "system"
+      }]
+    }
+  }
+
+  rules {
+    required_workflows {
+      do_not_enforce_on_create = true
+
+      required_workflow {
+        repository_id = module.repo_settings[".github"].repo_id
+        path          = ".github/workflows/openhands-review.yml"
+        ref           = "refs/heads/main"
+      }
+    }
+  }
+
+  bypass_actors {
+    actor_type  = "OrganizationAdmin"
+    bypass_mode = "pull_request"
+  }
+}
+
 # Requires the main-source workflow on gitflow repositories' main PRs.
 # `config/orgs/<owner>/required-workflows.yml` opts in each org.
 resource "github_organization_ruleset" "main_source_gate" {
