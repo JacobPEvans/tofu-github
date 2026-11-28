@@ -55,4 +55,17 @@ resource "github_organization_ruleset" "org_merge_gate" {
     }
   }
 
+  # Org admins and the apps in rulesets-defaults.yml merge_gate.bypass_app_ids may merge a pull request past the check.
+  bypass_actors {
+    actor_type  = "OrganizationAdmin"
+    bypass_mode = "pull_request"
+  }
+  dynamic "bypass_actors" {
+    for_each = toset(local.rulesets_defaults.merge_gate.bypass_app_ids)
+    content {
+      actor_id    = bypass_actors.value
+      actor_type  = "Integration"
+      bypass_mode = "pull_request"
+    }
+  }
 }
