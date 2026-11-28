@@ -99,3 +99,9 @@ actions:
 shared_branches:
   topic_enforcement: active
   green_enforcement: active
+
+# Consumed by github_organization_ruleset.org_merge_gate in merge-gate.tf:
+# GitHub App IDs that may merge a pull request past a merge gate check.
+merge_gate:
+  bypass_app_ids:
+    - 5274352
